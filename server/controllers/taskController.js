@@ -4,6 +4,7 @@ const db = require("../config/db");
 const createTask = async (req, res) => {
   try {
     const { title, description } = req.body;
+    const userId = req.user.id; // Get user ID from the authenticated user
 
     if (!title) {
       return res.status(400).json({
@@ -12,10 +13,10 @@ const createTask = async (req, res) => {
     }
 
     const newTask = await db.query(
-      `INSERT INTO tasks(title, description)
-       VALUES($1, $2)
+      `INSERT INTO tasks(title, description, user_id)
+       VALUES($1, $2, $3)
        RETURNING *`,
-      [title, description]
+      [title, description, userId]
     );
 
     res.status(201).json({
@@ -35,8 +36,11 @@ const createTask = async (req, res) => {
 // Get All Tasks
 const getTasks = async (req, res) => {
   try {
+    const userId = req.user.id; // Get user ID from the authenticated user
+
     const tasks = await db.query(
-      "SELECT * FROM tasks ORDER BY id ASC"
+      'SELECT * FROM tasks WHERE user_id = $1 ORDER BY id ASC',
+      [userId]
     );
 
     res.status(200).json(tasks.rows);
@@ -62,8 +66,9 @@ const updateTask = async (req, res) => {
            description=$2,
            status=$3
        WHERE id=$4
+       and user_id=$5
        RETURNING *`,
-      [title, description, status, id]
+      [title, description, status, id, req.user.id]
     );
 
     if (updatedTask.rows.length === 0) {
@@ -92,8 +97,8 @@ const deleteTask = async (req, res) => {
     const { id } = req.params;
 
     const deletedTask = await db.query(
-      "DELETE FROM tasks WHERE id=$1 RETURNING *",
-      [id]
+      "DELETE FROM tasks WHERE id=$1 AND user_id=$2 RETURNING *",
+      [id, req.user.id]
     );
 
     if (deletedTask.rows.length === 0) {
