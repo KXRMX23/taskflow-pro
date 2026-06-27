@@ -82,16 +82,19 @@ setNewTask({
 };  
 
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 p-10">
+      <div className="max-w-4xl max-auto px-6">
+      <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}
+      className="bg-white p-6 rounded-xl shadow-lg mb-8 max-w-xl">
     <input
         type="text"
         name="title"
         placeholder="Task Title"
         value={newTask.title}
         onChange={handleChange}
+        className="w-full border rounded-lg p-3 mb-4"
     />
 
     <br /><br />
@@ -101,11 +104,13 @@ setNewTask({
         placeholder="Task Description"
         value={newTask.description}
         onChange={handleChange}
+        className="w-full border rounded-lg p-3 mb-4"
     />
 
-    <br /><br />
+    
 
-    <button type="submit">
+    <button type="submit"
+        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
         {editingTaskId ? "Update Task" : "Create Task"}  
     </button>
 
@@ -116,30 +121,30 @@ setNewTask({
     {tasks.map((task) => (
         <div
             key={task.id}
-            style={{
-                border: "1px solid gray",
-                padding: "15px",
-                marginBottom: "15px",
-                borderRadius: "8px",
-            }}
+            className="bg-white rounded-xl shadow-lg p-6 mb-6 border"
         >
-            <h3>{task.title}</h3>
+            <h3 className="text-2xl font-bold mb-2">{task.title}</h3>
 
-            <p>{task.description}</p>
+            <p className="text-gray-700 mb-3">{task.description}</p>
 
-            <strong>Status:</strong> {task.status}
+            <p className="mb-4">
+            <strong className="text-gray-800">Status:</strong> {task.status}
+            </p>
 
-            <button onClick={() => handleEditChange(task)}>
+            <button onClick={() => handleEditChange(task)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg mr-3 transition">
                 Edit Task
             </button>
 
-            <button onClick={() => deleteTask(task.id)}>
+            <button onClick={() => deleteTask(task.id)}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
                 Delete Task
             </button>
         </div>
         
     ))}
 </div> 
+</div>
     </div>
   );
 }
