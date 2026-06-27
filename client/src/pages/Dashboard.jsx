@@ -8,6 +8,8 @@ function Dashboard() {
     description: "",
   });
 
+  const [editingTaskId, setEditingTaskId] = useState(null);
+
   useEffect(() => {
 
     const testAPI = async () => {
@@ -30,18 +32,39 @@ function Dashboard() {
     });
   }
 
+    const handleEditChange = (task) => {
+      setEditingTaskId(task.id);
+
+      setNewTask({
+      title: task.title,
+      description: task.description,
+    });
+  };
+
     const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-        const response = await API.post("/tasks", newTask);
+        if (editingTaskId) {
+    const response = await API.put(`/tasks/${editingTaskId}`, newTask);
 
-        setTasks([...tasks, response.data.task]);
+    setTasks(
+        tasks.map((task) =>
+            task.id === editingTaskId ? response.data.task : task
+        )
+    );
 
-        setNewTask({
-            title: "",
-            description: "",
-        });
+    setEditingTaskId(null);
+} else {
+    const response = await API.post("/tasks", newTask);
+
+    setTasks([...tasks, response.data.task]);
+}
+
+setNewTask({
+    title: "",
+    description: "",
+});
 
     } catch (err) {
         console.log(err.response?.data || err.message);
@@ -83,7 +106,7 @@ function Dashboard() {
     <br /><br />
 
     <button type="submit">
-        Create Task
+        {editingTaskId ? "Update Task" : "Create Task"}  
     </button>
 
     <hr />
@@ -105,6 +128,10 @@ function Dashboard() {
             <p>{task.description}</p>
 
             <strong>Status:</strong> {task.status}
+
+            <button onClick={() => handleEditChange(task)}>
+                Edit Task
+            </button>
 
             <button onClick={() => deleteTask(task.id)}>
                 Delete Task
