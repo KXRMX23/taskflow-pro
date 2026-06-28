@@ -11,11 +11,16 @@ function Dashboard() {
 
   const [editingTaskId, setEditingTaskId] = useState(null);
 
+  const pendingCount = tasks.filter((task) => task.status === "pending").length;
+  const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
+  const completedCount = tasks.filter((task) => task.status === "completed").length;
+
   useEffect(() => {
 
     const testAPI = async () => {
       try {
         const res = await API.get("/tasks");
+        console.log(res.data);
         setTasks(res.data);
       } catch (err) {
         console.log(err.response?.data || err.message);
@@ -85,8 +90,27 @@ setNewTask({
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-4xl max-auto px-6">
+      <div className="max-w-4xl mx-auto px-6">
       <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+  <div className="bg-yellow-100 rounded-xl shadow-lg p-6">
+    <h2 className="text-xl font-bold text-yellow-700">Pending</h2>
+    <p className="text-4xl font-bold mt-2">{pendingCount}</p>
+  </div>
+
+  <div className="bg-blue-100 rounded-xl shadow-lg p-6">
+    <h2 className="text-xl font-bold text-blue-700">In Progress</h2>
+    <p className="text-4xl font-bold mt-2">{inProgressCount}</p>
+  </div>
+
+  <div className="bg-green-100 rounded-xl shadow-lg p-6">
+    <h2 className="text-xl font-bold text-green-700">Completed</h2>
+    <p className="text-4xl font-bold mt-2">{completedCount}</p>
+  </div>
+
+</div>
 
       <form onSubmit={handleSubmit}
       className="bg-white p-6 rounded-xl shadow-lg mb-8 max-w-xl">
