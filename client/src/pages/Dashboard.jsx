@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import toast from "react-hot-toast";
+import EmptyState from "../assets/empty-state.svg";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -325,17 +326,21 @@ return (
      <div>
        {filteredTasks.length === 0 ? (
 
-        <div className="bg-white rounded-xl shadow-lg p-10 text-center mt-6">
+       <div className="bg-white rounded-xl shadow-lg p-10 text-center mt-6">
+  <img
+    src={EmptyState}
+    alt="No Tasks"
+    className="w-72 mx-auto mb-6"
+  />
 
-            <h2 className="text-2xl font-bold text-gray-700">
-                🔍 No Tasks Found
-            </h2>
+  <h2 className="text-2xl font-bold text-gray-700">
+    🔍 No Tasks Found
+  </h2>
 
-            <p className="text-gray-500 mt-3">
-                Try another keyword or create a new task to get started!
-            </p>
-
-        </div>
+  <p className="text-gray-500 mt-3">
+    Try another keyword or create a new task to get started!
+  </p>
+</div> 
 
     ) : (
 
