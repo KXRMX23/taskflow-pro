@@ -104,7 +104,7 @@ setNewTask({
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search tasks..."
+          placeholder="🔍 Search tasks..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full mx-w-md border rounded-lg p-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,31 +171,60 @@ setNewTask({
 </form>
 
      <div>
-    {filteredTasks.map((task) => (
+       {filteredTasks.length === 0 ? (
+
+        <div className="bg-white rounded-xl shadow-lg p-10 text-center mt-6">
+
+            <h2 className="text-2xl font-bold text-gray-700">
+                🔍 No Tasks Found
+            </h2>
+
+            <p className="text-gray-500 mt-3">
+                Try another keyword or create a new task to get started!
+            </p>
+
+        </div>
+
+    ) : (
+
+    filteredTasks.map((task) => ( 
+    
         <div
             key={task.id}
-            className="bg-white rounded-xl shadow-lg p-6 mb-6 border"
+            className="bg-white rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
         >
             <h3 className="text-2xl font-bold mb-2">{task.title}</h3>
 
             <p className="text-gray-700 mb-3">{task.description}</p>
 
             <p className="mb-4">
-            <strong className="text-gray-800">Status:</strong> {task.status}
-            </p>
+            <span
+        className={`px-3 py-1 rounded-full text-sm font-semibold
+        ${
+            task.status === "completed"
+                ? "bg-green-100 text-green-700"
+                : task.status === "in-progress"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-yellow-100 text-yellow-700"
+        }`}
+    >
+        {task.status}
+    </span>
+</p>
 
             <button onClick={() => handleEditChange(task)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg mr-3 transition">
-                Edit Task
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg mr-3 transition-all duration-300 hover:scale-105">
+              ✏️ Edit 
             </button>
 
             <button onClick={() => deleteTask(task.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-                Delete Task
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105">
+              🗑️ Delete 
             </button>
         </div>
-        
+    )  
     ))}
+    
 </div> 
 </div>
     </div>
