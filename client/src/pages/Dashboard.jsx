@@ -21,6 +21,9 @@ function Dashboard() {
   });
 
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingTaskId, setDeletingTaskId] = useState(null);
 
   const pendingCount = tasks.filter((task) => task.status === "pending").length;
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
@@ -65,8 +68,10 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
         const res = await API.get("/tasks");
         console.log(res.data);
         setTasks(res.data);
+        setLoading(false);
       } catch (err) {
         console.log(err.response?.data || err.message);
+        setLoading(false);
       }
     };
 
@@ -100,6 +105,8 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
     const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setSubmitting(true);
+
     try {
         if (editingTaskId) {
     const response = await API.put(`/tasks/${editingTaskId}`, newTask);
@@ -123,9 +130,13 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
 setNewTask({
     title: "",
     description: "",
+    status: "pending",
 });
 
+setSubmitting(false);
+
     } catch (err) {
+        setSubmitting(false);
         toast.error("Something went wrong. Please try again.");
         console.log(err.response?.data || err.message);
     }
@@ -133,21 +144,32 @@ setNewTask({
 
    const deleteTask = async (id) => {
   try {
+    setDeletingTaskId(id);
     await API.delete(`/tasks/${id}`);
 
     setTasks(tasks.filter((task) => task.id !== id));
+    setDeletingTaskId(null);
   } catch (err) {
+    setDeletingTaskId(null);
     console.log(err.response?.data || err.message);
   }
 };  
 
-  return (
+
+if (loading) {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white text-2xl font-bold">
+            Loading tasks...
+        </div>
+    );
+}
+
+return (
     <div className={`min-h-screen transition-all duration-300 ${
-    darkMode
-      ? "bg-gray-900 text-white"
-      : "bg-gray-100 text-black"
-  }`}
->
+        darkMode
+            ? "bg-gray-900 text-white"
+            : "bg-gray-100 text-black"
+    }`}>
       
     <div className="flex justify-end p-6">
       <div className="max-w-4xl mx-auto px-6">
@@ -278,8 +300,15 @@ setNewTask({
     </select>
 
     <button type="submit"
+        disabled={submitting}
         className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
-        {editingTaskId ? "Update Task" : "Create Task"}  
+        {
+    submitting
+        ? "Saving..."
+        : editingTaskId
+            ? "Update Task"
+            : "Create Task"
+} 
     </button>
 
     <hr/>
@@ -349,10 +378,13 @@ setNewTask({
               ✏️ Edit 
             </button>
 
-            <button onClick={() => deleteTask(task.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105">
-              🗑️ Delete 
-            </button>
+            <button
+    onClick={() => deleteTask(task.id)}
+    disabled={deletingTaskId === task.id}
+    className="bg-red-500 text-white px-4 py-2 rounded-lg"
+>
+    {deletingTaskId === task.id ? "🗑 Deleting..." : "🗑 Delete"}
+</button>
         </div>
     )  
     ))}
