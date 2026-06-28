@@ -158,18 +158,26 @@ setNewTask({
       <div className="flex gap-4 mb-6">
 
     <input
-        type="text"
-        placeholder="🔍 Search tasks..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="flex-1 border rounded-lg px-4 py-3"
-    />
+  type="text"
+  placeholder="🔍 Search tasks..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  className={`flex-1 border rounded-lg px-4 py-3 transition-all duration-300 ${
+    darkMode
+      ? "bg-gray-700 text-white border-gray-600 placeholder-gray-300"
+      : "bg-white text-black border-gray-300"
+  }`}
+/>
 
     <select
         value={sortBy}
         onChange={(e) => setSortBy(e.target.value)}
-        className="border rounded-lg px-4 py-2"
-    >
+        className={`border rounded-lg px-4 py-2 transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-700 text-white border-gray-600"
+    : "bg-white text-black border-gray-300"
+}`}
+        >
       <option value="newest">Newest</option>
       <option value="oldest">Oldest</option>
       <option value="az">A-Z</option>
@@ -179,7 +187,11 @@ setNewTask({
       <select
         value={statusFilter}
         onChange={(e) => setStatusFilter(e.target.value)}
-        className="border rounded-lg px-4 py-2"
+        className={`border rounded-lg px-4 py-2 transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-700 text-white border-gray-600"
+    : "bg-white text-black border-gray-300"
+}`}
     >
     
         <option value="all">All</option>
@@ -209,15 +221,26 @@ setNewTask({
 
 </div>
 
-      <form onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-xl shadow-lg mb-8 max-w-xl">
+   <form
+  onSubmit={handleSubmit}
+  className={`p-6 rounded-xl shadow-lg mb-8 max-w-xl transition-all duration-300 ${
+    darkMode
+      ? "bg-gray-800"
+      : "bg-white"
+  }`}
+>   
+
     <input
         type="text"
         name="title"
         placeholder="Task Title"
         value={newTask.title}
         onChange={handleChange}
-        className="w-full border rounded-lg p-3 mb-4"
+        className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-700 text-white border-gray-600"
+    : "bg-white text-black border-gray-300"
+}`}
     />
 
     <br /><br />
@@ -227,14 +250,22 @@ setNewTask({
         placeholder="Task Description"
         value={newTask.description}
         onChange={handleChange}
-        className="w-full border rounded-lg p-3 mb-4"
+        className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-700 text-white border-gray-600 placeholder-gray-400"
+    : "bg-white text-black border-gray-300"
+}`}
     />
       
     <select
         name="status"
         value={newTask.status}
         onChange={handleChange}
-        className="w-full border rounded-lg p-3 mb-4"
+        className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-700 text-white border-gray-600"
+    : "bg-white text-black border-gray-300"
+}`}
     >
       <option value="pending">Pending</option>
       <option value="in-progress">In Progress</option>
@@ -246,7 +277,8 @@ setNewTask({
         {editingTaskId ? "Update Task" : "Create Task"}  
     </button>
 
-    <hr />
+    <hr/>
+
 </form>
 
      <div>
@@ -270,11 +302,27 @@ setNewTask({
     
         <div
             key={task.id}
-            className="bg-white rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+          className={`rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 ${
+  darkMode
+    ? "bg-gray-800 border-gray-700"
+    : "bg-white border-gray-200"
+}`} 
         >
-            <h3 className="text-2xl font-bold mb-2">{task.title}</h3>
+            <h3
+  className={`text-2xl font-bold mb-2 ${
+    darkMode ? "text-white" : "text-black"
+  }`}
+>
+  {task.title}
+</h3>
 
-            <p className="text-gray-700 mb-3">{task.description}</p>
+            <p
+  className={`mb-3 ${
+    darkMode ? "text-gray-300" : "text-gray-700"
+  }`}
+>
+  {task.description}
+</p>
 
             <p className="mb-4">
             <span
@@ -307,7 +355,7 @@ setNewTask({
 </div> 
 </div>
     </div>
-    </div>
+  </div> 
   );
 }
 
