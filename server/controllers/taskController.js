@@ -3,7 +3,7 @@ const db = require("../config/db");
 // Create Task
 const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, status } = req.body;
     const userId = req.user.id; // Get user ID from the authenticated user
 
     if (!title) {
@@ -13,10 +13,10 @@ const createTask = async (req, res) => {
     }
 
     const newTask = await db.query(
-      `INSERT INTO tasks(title, description, user_id)
-       VALUES($1, $2, $3)
+      `INSERT INTO tasks(title, description, status, user_id)
+       VALUES($1, $2, $3, $4)
        RETURNING *`,
-      [title, description, userId]
+      [title, description, status, userId]
     );
 
     res.status(201).json({

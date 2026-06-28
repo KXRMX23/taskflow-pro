@@ -6,6 +6,7 @@ function Dashboard() {
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
+    status: "pending",
   });
 
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -38,6 +39,7 @@ function Dashboard() {
       setNewTask({
       title: task.title,
       description: task.description,
+      status: task.status,
     });
   };
 
@@ -106,8 +108,17 @@ setNewTask({
         onChange={handleChange}
         className="w-full border rounded-lg p-3 mb-4"
     />
-
-    
+      
+    <select
+        name="status"
+        value={newTask.status}
+        onChange={handleChange}
+        className="w-full border rounded-lg p-3 mb-4"
+    >
+      <option value="pending">Pending</option>
+      <option value="in-progress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
 
     <button type="submit"
         className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
