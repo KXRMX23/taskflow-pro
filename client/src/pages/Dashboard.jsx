@@ -142,19 +142,26 @@ setSubmitting(false);
     }
 };   
 
-   const deleteTask = async (id) => {
-  try {
-    setDeletingTaskId(id);
-    await API.delete(`/tasks/${id}`);
+  const deleteTask = async (id) => {
+    try {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this task?"
+        );
 
-    setTasks(tasks.filter((task) => task.id !== id));
-    setDeletingTaskId(null);
-  } catch (err) {
-    setDeletingTaskId(null);
-    console.log(err.response?.data || err.message);
-  }
-};  
+        if (!confirmed) return;
 
+        setDeletingTaskId(id);
+
+        await API.delete(`/tasks/${id}`);
+
+        setTasks(tasks.filter((task) => task.id !== id));
+
+        setDeletingTaskId(null);
+    } catch (err) {
+        setDeletingTaskId(null);
+        console.log(err.response?.data || err.message);
+    }
+};
 
 if (loading) {
     return (
