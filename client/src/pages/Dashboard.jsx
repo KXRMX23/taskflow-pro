@@ -3,6 +3,9 @@ import API from "../services/api";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -14,6 +17,11 @@ function Dashboard() {
   const pendingCount = tasks.filter((task) => task.status === "pending").length;
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
   const completedCount = tasks.filter((task) => task.status === "completed").length;
+
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
 
@@ -93,6 +101,16 @@ setNewTask({
       <div className="max-w-4xl mx-auto px-6">
       <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
 
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full mx-w-md border rounded-lg p-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
   <div className="bg-yellow-100 rounded-xl shadow-lg p-6">
@@ -153,7 +171,7 @@ setNewTask({
 </form>
 
      <div>
-    {tasks.map((task) => (
+    {filteredTasks.map((task) => (
         <div
             key={task.id}
             className="bg-white rounded-xl shadow-lg p-6 mb-6 border"
