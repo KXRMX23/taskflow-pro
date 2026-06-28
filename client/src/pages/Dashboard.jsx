@@ -6,6 +6,9 @@ function Dashboard() {
   
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -18,10 +21,33 @@ function Dashboard() {
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
   const completedCount = tasks.filter((task) => task.status === "completed").length;
 
-  const filteredTasks = tasks.filter((task) =>
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
     task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     task.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+    const matchesStatus =
+      statusFilter === "all" || task.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+  });
+
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    switch (sortBy) {
+        case "oldest":
+            return new Date(a.created_at) - new Date(b.created_at);
+
+        case "az":
+            return a.title.localeCompare(b.title);
+
+        case "za":
+            return b.title.localeCompare(a.title);
+
+        case "newest":
+        default:
+            return new Date(b.created_at) - new Date(a.created_at);
+    }
+});
 
   useEffect(() => {
 
@@ -101,15 +127,40 @@ setNewTask({
       <div className="max-w-4xl mx-auto px-6">
       <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
 
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="🔍 Search tasks..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full mx-w-md border rounded-lg p-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+      <div className="flex gap-4 mb-6">
+
+    <input
+        type="text"
+        placeholder="🔍 Search tasks..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="flex-1 border rounded-lg px-4 py-3"
+    />
+
+    <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        className="border rounded-lg px-4 py-2"
+    >
+      <option value="newest">Newest</option>
+      <option value="oldest">Oldest</option>
+      <option value="az">A-Z</option>
+      <option value="za">Z-A</option>
+      </select>
+
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        className="border rounded-lg px-4 py-2"
+    >
+    
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="in-progress">In Progress</option>
+        <option value="completed">Completed</option>
+    </select>
+
+</div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
@@ -187,7 +238,7 @@ setNewTask({
 
     ) : (
 
-    filteredTasks.map((task) => ( 
+    sortedTasks.map((task) => ( 
     
         <div
             key={task.id}
