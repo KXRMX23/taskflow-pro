@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import toast from "react-hot-toast";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -102,18 +103,21 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
     try {
         if (editingTaskId) {
     const response = await API.put(`/tasks/${editingTaskId}`, newTask);
-
+    
     setTasks(
         tasks.map((task) =>
             task.id === editingTaskId ? response.data.task : task
         )
     );
 
+    toast.success("Task updated successfully!");
+
     setEditingTaskId(null);
 } else {
     const response = await API.post("/tasks", newTask);
 
     setTasks([...tasks, response.data.task]);
+    toast.success("Task created successfully!");
 }
 
 setNewTask({
@@ -122,6 +126,7 @@ setNewTask({
 });
 
     } catch (err) {
+        toast.error("Something went wrong. Please try again.");
         console.log(err.response?.data || err.message);
     }
 };   
