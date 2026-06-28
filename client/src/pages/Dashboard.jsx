@@ -9,6 +9,10 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "true";
+  });
+
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -49,6 +53,10 @@ function Dashboard() {
     }
 });
 
+const pendingTasks = sortedTasks.filter((task) => task.status === "pending");
+const inProgressTasks = sortedTasks.filter((task) => task.status === "in-progress");
+const completedTasks = sortedTasks.filter((task) => task.status === "completed");
+
   useEffect(() => {
 
     const testAPI = async () => {
@@ -64,7 +72,13 @@ function Dashboard() {
     testAPI();
 
   }, []);
- 
+
+
+  useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    
+  }, [darkMode]);
+    
     const handleChange = (e) => {
     setNewTask({
       ...newTask,
@@ -123,9 +137,23 @@ setNewTask({
 };  
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
+    <div className={`min-h-screen transition-all duration-300 ${
+    darkMode
+      ? "bg-gray-900 text-white"
+      : "bg-gray-100 text-black"
+  }`}
+>
+      
+    <div className="flex justify-end p-6">
       <div className="max-w-4xl mx-auto px-6">
       <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
+
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        className="mb-6 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition"
+      >
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
 
       <div className="flex gap-4 mb-6">
 
@@ -278,6 +306,7 @@ setNewTask({
     
 </div> 
 </div>
+    </div>
     </div>
   );
 }
