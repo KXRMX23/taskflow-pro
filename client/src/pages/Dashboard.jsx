@@ -239,17 +239,17 @@ return (
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-  <div className="bg-yellow-100 rounded-xl shadow-lg p-6">
+  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
     <h2 className="text-xl font-bold text-yellow-700">Pending</h2>
     <p className="text-4xl font-bold mt-2">{pendingCount}</p>
   </div>
 
-  <div className="bg-blue-100 rounded-xl shadow-lg p-6">
+  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
     <h2 className="text-xl font-bold text-blue-700">In Progress</h2>
     <p className="text-4xl font-bold mt-2">{inProgressCount}</p>
   </div>
 
-  <div className="bg-green-100 rounded-xl shadow-lg p-6">
+  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
     <h2 className="text-xl font-bold text-green-700">Completed</h2>
     <p className="text-4xl font-bold mt-2">{completedCount}</p>
   </div>
@@ -309,7 +309,7 @@ return (
 
     <button type="submit"
         disabled={submitting}
-        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-all duration-300 hover:scale-105 active:scale-95">
         {
     submitting
         ? "Saving..."
@@ -348,7 +348,7 @@ return (
     
         <div
             key={task.id}
-          className={`rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 ${
+          className={`rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
   darkMode
     ? "bg-gray-800 border-gray-700"
     : "bg-white border-gray-200"
@@ -386,14 +386,14 @@ return (
 </p>
 
             <button onClick={() => handleEditChange(task)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg mr-3 transition-all duration-300 hover:scale-105">
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg mr-3 transition-all duration-300 hover:scale-105 active:scale-95">
               ✏️ Edit 
             </button>
 
             <button
     onClick={() => deleteTask(task.id)}
     disabled={deletingTaskId === task.id}
-    className="bg-red-500 text-white px-4 py-2 rounded-lg"
+    className="bg-red-500 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95"
 >
     {deletingTaskId === task.id ? "🗑 Deleting..." : "🗑 Delete"}
 </button>
