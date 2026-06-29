@@ -180,7 +180,7 @@ return (
     }`}>
       
     <div className="flex justify-end p-6">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
 
       <button
@@ -190,7 +190,7 @@ return (
         {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
 
     <input
   type="text"
@@ -237,7 +237,7 @@ return (
 
 </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 
   <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
     <h2 className="text-xl font-bold text-yellow-700">Pending</h2>
@@ -348,7 +348,7 @@ return (
     
         <div
             key={task.id}
-          className={`rounded-xl shadow-lg p-6 mb-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+          className={`rounded-xl shadow-lg p-4 sm:p-6 mb-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
   darkMode
     ? "bg-gray-800 border-gray-700"
     : "bg-white border-gray-200"
