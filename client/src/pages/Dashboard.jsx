@@ -2,6 +2,29 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+} from "@hello-pangea/dnd";
+
+import {
+  Search,
+  Moon,
+  Sun,
+  ClipboardList,
+  Plus
+} from "lucide-react"
+
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts"
+
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -11,14 +34,17 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
+  // FIX #2: was checking for "true" but we store "dark"/"light"
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("theme") === "true";
+    return localStorage.getItem("theme") === "dark";
   });
 
+  // FIX #3: priority now capitalized to match <option value="..."> casing
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
     status: "pending",
+    priority: "Medium"
   });
 
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -28,7 +54,15 @@ function Dashboard() {
 
   const pendingCount = tasks.filter((task) => task.status === "pending").length;
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
-  const completedCount = tasks.filter((task) => task.status === "completed").length;
+  const completedCount = tasks.filter((task) => task.status === "completed").length; 
+ 
+  const chartData = [
+  { name: "Pending", value: pendingCount },
+  { name: "In Progress", value: inProgressCount },
+  { name: "Completed", value: completedCount },
+];
+
+const COLORS = ["#FACC15", "#3B82F6", "#22C55E"];
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -100,6 +134,7 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
       title: task.title,
       description: task.description,
       status: task.status,
+      priority: task.priority,
     });
   };
 
@@ -111,7 +146,7 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
     try {
         if (editingTaskId) {
     const response = await API.put(`/tasks/${editingTaskId}`, newTask);
-    
+    console.log(response.data);
     setTasks(
         tasks.map((task) =>
             task.id === editingTaskId ? response.data.task : task
@@ -132,6 +167,7 @@ setNewTask({
     title: "",
     description: "",
     status: "pending",
+    priority: "Medium"
 });
 
 setSubmitting(false);
@@ -164,6 +200,40 @@ setSubmitting(false);
     }
 };
 
+const onDragEnd = async (result) => {
+  if (!result.destination) return;
+
+  const { source, destination, draggableId } = result;
+
+  if (
+    source.droppableId === destination.droppableId &&
+    source.index === destination.index
+  ) {
+    return;
+  }
+
+  const newStatus = destination.droppableId;
+
+  try {
+    await API.put(`/tasks/${draggableId}`, {
+      ...tasks.find(task => task.id === Number(draggableId)),
+      status: newStatus,
+    });
+
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === Number(draggableId)
+          ? { ...task, status: newStatus }
+          : task
+      )
+    );
+
+    toast.success("Task moved successfully!");
+  } catch (err) {
+    toast.error("Failed to move task");
+  }
+};
+
 if (loading) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white text-2xl font-bold">
@@ -173,44 +243,62 @@ if (loading) {
 }
 
 return (
+  <DragDropContext onDragEnd={onDragEnd}>
     <div className={`min-h-screen transition-all duration-300 ${
         darkMode
             ? "bg-gray-900 text-white"
             : "bg-gray-100 text-black"
     }`}>
       
-    <div className="flex justify-end p-6">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 className="text-5xl font-bold text-blue-700 mb-8">Dashboard</h1>
+    <div className="flex justify-between items-center mb-8">
+      <div className="max-w-6xl mx-auto px-6 pt-12 pb-10">
+<div className="flex items-center gap-5 mb-10">
+    <div className="bg-blue-600 text-white w-20 h-20 rounded-2xl shadow-lg flex items-center justify-center flex-shrink-0">
+        <ClipboardList size={42} />
+    </div>
 
+    <div>
+        <h1 className="text-5xl font-extrabold tracking-tight">
+            TaskFlow Pro
+        </h1>
+
+        <p className="text-lg text-gray-500 dark:text-gray-400 mt-1">
+            Organize your work efficiently
+        </p>
+    </div>
+</div>
       <button
         onClick={() => setDarkMode(!darkMode)}
-        className="mb-6 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition"
+        className="mb-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition"
       >
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        
+    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+    <span>
+        {darkMode ? "Light Mode" : "Dark Mode"}
+    </span>
       </button>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-6 mb-10">
 
     <input
   type="text"
   placeholder="🔍 Search tasks..."
   value={searchTerm}
   onChange={(e) => setSearchTerm(e.target.value)}
-  className={`flex-1 border rounded-lg px-4 py-3 transition-all duration-300 ${
+  className={`flex-1 rounded-xl border px-5 py-3 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none ${
     darkMode
-      ? "bg-gray-700 text-white border-gray-600 placeholder-gray-300"
-      : "bg-white text-black border-gray-300"
+      ? "bg-gray-800 text-white border-gray-700"
+      : "bg-white border-gray-300"
   }`}
 />
 
     <select
         value={sortBy}
         onChange={(e) => setSortBy(e.target.value)}
-        className={`border rounded-lg px-4 py-2 transition-all duration-300 ${
+        className={`rounded-xl border px-4 py-3 shadow-sm transition ${
   darkMode
-    ? "bg-gray-700 text-white border-gray-600"
-    : "bg-white text-black border-gray-300"
+    ? "bg-gray-800 text-white border-gray-700"
+    : "bg-white border-gray-300"
 }`}
         >
       <option value="newest">Newest</option>
@@ -222,10 +310,10 @@ return (
       <select
         value={statusFilter}
         onChange={(e) => setStatusFilter(e.target.value)}
-        className={`border rounded-lg px-4 py-2 transition-all duration-300 ${
+        className={`rounded-xl border px-4 py-3 shadow-sm transition ${
   darkMode
-    ? "bg-gray-700 text-white border-gray-600"
-    : "bg-white text-black border-gray-300"
+    ? "bg-gray-800 text-white border-gray-700"
+    : "bg-white border-gray-300"
 }`}
     >
     
@@ -237,28 +325,63 @@ return (
 
 </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
-  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
+  {/* FIX #4: "duration 300" -> "duration-300" (3 cards below) */}
+  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
     <h2 className="text-xl font-bold text-yellow-700">Pending</h2>
     <p className="text-4xl font-bold mt-2">{pendingCount}</p>
   </div>
 
-  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
+  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
     <h2 className="text-xl font-bold text-blue-700">In Progress</h2>
     <p className="text-4xl font-bold mt-2">{inProgressCount}</p>
   </div>
 
-  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration 300 hover:scale-105 hover:shadow-xl cursor-pointer">
+  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
     <h2 className="text-xl font-bold text-green-700">Completed</h2>
     <p className="text-4xl font-bold mt-2">{completedCount}</p>
   </div>
 
 </div>
 
+{/* Task Analytics */}
+<div
+  className={`p-6 rounded-2xl shadow-lg mb-10 ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <h2 className="text-2xl font-bold mb-6">
+    Task Analytics
+  </h2>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie
+        data={chartData}
+        cx="50%"
+        cy="50%"
+        outerRadius={100}
+        dataKey="value"
+        label
+      >
+        {chartData.map((entry, index) => (
+          <Cell
+            key={index}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+
    <form
   onSubmit={handleSubmit}
-  className={`p-6 rounded-xl shadow-lg mb-8 max-w-xl transition-all duration-300 ${
+  className={`p-6 rounded-2xl shadow-lg mb-10 max-w-xl transition-all duration-300 ${
     darkMode
       ? "bg-gray-800"
       : "bg-white"
@@ -307,15 +430,35 @@ return (
       <option value="completed">Completed</option>
     </select>
 
+    <select
+  name="priority"
+  value={newTask.priority}
+  onChange={handleChange}
+  className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+    darkMode
+      ? "bg-gray-700 text-white border-gray-600"
+      : "bg-white text-black border-gray-300"
+  }`}
+>
+  <option value="Low">🟢 Low Priority</option>
+  <option value="Medium">🟡 Medium Priority</option>
+  <option value="High">🔴 High Priority</option>
+</select>
+
     <button type="submit"
         disabled={submitting}
-        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-all duration-300 hover:scale-105 active:scale-95">
+        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
         {
     submitting
         ? "Saving..."
         : editingTaskId
             ? "Update Task"
-            : "Create Task"
+            : (
+              <>
+              <Plus size={18} />
+              <span>Create Task</span>
+              </>
+            )
 } 
     </button>
 
@@ -324,88 +467,408 @@ return (
 </form>
 
      <div>
-       {filteredTasks.length === 0 ? (
+  {filteredTasks.length === 0 ? (
+    /* FIX #6: empty state now respects dark mode */
+    <div className={`rounded-xl shadow-lg p-10 text-center mt-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+      <img
+        src={EmptyState}
+        alt="No Tasks"
+        className="w-72 mx-auto mb-6"
+      />
 
-       <div className="bg-white rounded-xl shadow-lg p-10 text-center mt-6">
-  <img
-    src={EmptyState}
-    alt="No Tasks"
-    className="w-72 mx-auto mb-6"
-  />
+      <h2 className={`text-2xl font-bold ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+        🔍 No Tasks Found
+      </h2>
 
-  <h2 className="text-2xl font-bold text-gray-700">
-    🔍 No Tasks Found
-  </h2>
-
-  <p className="text-gray-500 mt-3">
-    Try another keyword or create a new task to get started!
-  </p>
-</div> 
-
-    ) : (
-
-    sortedTasks.map((task) => ( 
-    
-        <div
-            key={task.id}
-          className={`rounded-xl shadow-lg p-4 sm:p-6 mb-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
-  darkMode
-    ? "bg-gray-800 border-gray-700"
-    : "bg-white border-gray-200"
-}`} 
-        >
-            <h3
-  className={`text-2xl font-bold mb-2 ${
-    darkMode ? "text-white" : "text-black"
-  }`}
->
-  {task.title}
-</h3>
-
-            <p
-  className={`mb-3 ${
-    darkMode ? "text-gray-300" : "text-gray-700"
-  }`}
->
-  {task.description}
-</p>
-
-            <p className="mb-4">
-            <span
-        className={`px-3 py-1 rounded-full text-sm font-semibold
-        ${
-            task.status === "completed"
-                ? "bg-green-100 text-green-700"
-                : task.status === "in-progress"
-                ? "bg-blue-100 text-blue-700"
-                : "bg-yellow-100 text-yellow-700"
-        }`}
+      <p className={`mt-3 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+        Try another keyword or create a new task to get started!
+      </p>
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div>
+      <h2 className="text-2xl font-bold mb-4 text-yellow-500">Pending</h2>
+      <Droppable droppableId="pending">
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
     >
-        {task.status}
-    </span>
+
+      {pendingTasks.map((task, index) => (
+        <Draggable
+        key={task.id}
+  draggableId={task.id.toString()}
+  index={index}
+>
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      
+          className={`group rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] p-6 mb-8 border transition-all duration-300 ease-out ${
+            darkMode
+              ? "bg-gray-800 border-gray-700"
+              : "bg-white border-gray-200"
+          }`}
+        >
+          <h3
+            className={`text-3xl font-bold tracking-tight mb-3 transition-all duration-300 group-hover:translate-x-1 ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+
+            <div
+  className={`h-1.5 rounded-full mb-5 transition-all duration-500 ${
+    task.status === "completed"
+      ? "bg-green-500"
+      : task.status === "in-progress"
+      ? "bg-blue-500"
+      : "bg-yellow-500"
+  }`}
+/>
+
+            {task.title}
+          </h3>
+
+          <p
+            className={`mb-5 leading-7 transition-all duration-300 group-hover:text-black ${
+              darkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {task.description}
+          </p>
+
+          <p
+  className={`text-sm mb-4 ${
+    darkMode ? "text-gray-400" : "text-gray-500"
+  }`}
+>
+  📅 Created: {new Date(task.created_at).toLocaleDateString()}
 </p>
 
-            <button onClick={() => handleEditChange(task)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg mr-3 transition-all duration-300 hover:scale-105 active:scale-95">
-              ✏️ Edit 
+
+          <p className="mb-4">
+            <span
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-110 shadow-sm ${
+                task.status === "completed"
+                  ? "bg-green-100 text-green-700"
+                  : task.status === "in-progress"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {task.status}
+            </span>
+          </p>
+
+          <p className="mb-5">
+  <span
+    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+      task.priority === "High"
+        ? "bg-red-100 text-red-700"
+        : task.priority === "Medium"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
+    {task.priority === "High"
+      ? "🔴 High Priority"
+      : task.priority === "Medium"
+      ? "🟡 Medium Priority"
+      : "🟢 Low Priority"}
+  </span>
+</p>
+
+          <div className="flex flex-wrap gap-3 mt-6">
+            <button
+              onClick={() => handleEditChange(task)}
+              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              ✏️ Edit
             </button>
 
             <button
-    onClick={() => deleteTask(task.id)}
-    disabled={deletingTaskId === task.id}
-    className="bg-red-500 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95"
->
-    {deletingTaskId === task.id ? "🗑 Deleting..." : "🗑 Delete"}
-</button>
+              onClick={() => deleteTask(task.id)}
+              disabled={deletingTaskId === task.id}
+              className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              {deletingTaskId === task.id
+                ? "🗑 Deleting..."
+                : "🗑 Delete"}
+            </button>
+          </div>
         </div>
-    )  
-    ))}
-    
-</div> 
+            )}
+          </Draggable>
+      ))}
+
+      {provided.placeholder}
+    </div>
+  )}
+</Droppable>
+</div>
+
+<div>
+  <h2 className="text-2xl font-bold mb-4 text-blue-500">In Progress</h2>
+
+<Droppable droppableId="in-progress">
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
+    >
+
+      {inProgressTasks.map((task, index) => (
+        <Draggable
+        key={task.id}
+  draggableId={task.id.toString()}
+  index={index}
+>
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      
+          className={`group rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] p-6 mb-8 border transition-all duration-300 ease-out ${
+            darkMode
+              ? "bg-gray-800 border-gray-700"
+              : "bg-white border-gray-200"
+          }`}
+        >
+          <h3
+            className={`text-3xl font-bold tracking-tight mb-3 transition-all duration-300 group-hover:translate-x-1 ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+
+            <div
+  className={`h-1.5 rounded-full mb-5 transition-all duration-500 ${
+    task.status === "completed"
+      ? "bg-green-500"
+      : task.status === "in-progress"
+      ? "bg-blue-500"
+      : "bg-yellow-500"
+  }`}
+/>
+
+            {task.title}
+          </h3>
+
+          <p
+            className={`mb-5 leading-7 transition-all duration-300 group-hover:text-black ${
+              darkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {task.description}
+          </p>
+
+          <p
+  className={`text-sm mb-4 ${
+    darkMode ? "text-gray-400" : "text-gray-500"
+  }`}
+>
+  📅 Created: {new Date(task.created_at).toLocaleDateString()}
+</p>
+
+
+          <p className="mb-4">
+            <span
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-110 shadow-sm ${
+                task.status === "completed"
+                  ? "bg-green-100 text-green-700"
+                  : task.status === "in-progress"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {task.status}
+            </span>
+          </p>
+
+          <p className="mb-5">
+  <span
+    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+      task.priority === "High"
+        ? "bg-red-100 text-red-700"
+        : task.priority === "Medium"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
+    {task.priority === "High"
+      ? "🔴 High Priority"
+      : task.priority === "Medium"
+      ? "🟡 Medium Priority"
+      : "🟢 Low Priority"}
+  </span>
+</p>
+
+          <div className="flex flex-wrap gap-3 mt-6">
+            <button
+              onClick={() => handleEditChange(task)}
+              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              onClick={() => deleteTask(task.id)}
+              disabled={deletingTaskId === task.id}
+              className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              {deletingTaskId === task.id
+                ? "🗑 Deleting..."
+                : "🗑 Delete"}
+            </button>
+          </div>
+        </div>
+            )}
+          </Draggable>
+      ))}
+
+      {provided.placeholder}
+    </div>
+  )}
+</Droppable>
+</div>
+
+<div>
+  <h2 className="text-2xl font-bold mb-4 text-green-500">Completed</h2>
+
+<Droppable droppableId="completed">
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
+    >
+
+      {completedTasks.map((task, index) => (
+        <Draggable
+        key={task.id}
+  draggableId={task.id.toString()}
+  index={index}
+>
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      
+          className={`group rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] p-6 mb-8 border transition-all duration-300 ease-out ${
+            darkMode
+              ? "bg-gray-800 border-gray-700"
+              : "bg-white border-gray-200"
+          }`}
+        >
+          <h3
+            className={`text-3xl font-bold tracking-tight mb-3 transition-all duration-300 group-hover:translate-x-1 ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+
+            <div
+  className={`h-1.5 rounded-full mb-5 transition-all duration-500 ${
+    task.status === "completed"
+      ? "bg-green-500"
+      : task.status === "in-progress"
+      ? "bg-blue-500"
+      : "bg-yellow-500"
+  }`}
+/>
+
+            {task.title}
+          </h3>
+
+          <p
+            className={`mb-5 leading-7 transition-all duration-300 group-hover:text-black ${
+              darkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {task.description}
+          </p>
+
+          <p
+  className={`text-sm mb-4 ${
+    darkMode ? "text-gray-400" : "text-gray-500"
+  }`}
+>
+  📅 Created: {new Date(task.created_at).toLocaleDateString()}
+</p>
+
+
+          <p className="mb-4">
+            <span
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-110 shadow-sm ${
+                task.status === "completed"
+                  ? "bg-green-100 text-green-700"
+                  : task.status === "in-progress"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {task.status}
+            </span>
+          </p>
+
+          <p className="mb-5">
+  <span
+    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+      task.priority === "High"
+        ? "bg-red-100 text-red-700"
+        : task.priority === "Medium"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
+    {task.priority === "High"
+      ? "🔴 High Priority"
+      : task.priority === "Medium"
+      ? "🟡 Medium Priority"
+      : "🟢 Low Priority"}
+  </span>
+</p>
+
+          <div className="flex flex-wrap gap-3 mt-6">
+            <button
+              onClick={() => handleEditChange(task)}
+              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              onClick={() => deleteTask(task.id)}
+              disabled={deletingTaskId === task.id}
+              className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+              {deletingTaskId === task.id
+                ? "🗑 Deleting..."
+                : "🗑 Delete"}
+            </button>
+          </div>
+        </div>
+            )}
+          </Draggable>
+      ))}
+
+      {provided.placeholder}
+    </div>
+  )}
+</Droppable>
 </div>
     </div>
-  </div> 
-  );
+  )}
+</div>
+
+
+</div>
+</div>
+</div>
+</DragDropContext>
+);
 }
 
 

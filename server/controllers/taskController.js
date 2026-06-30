@@ -3,7 +3,7 @@ const db = require("../config/db");
 // Create Task
 const createTask = async (req, res) => {
   try {
-    const { title, description, status } = req.body;
+    const { title, description, status, priority } = req.body;
     const userId = req.user.id; // Get user ID from the authenticated user
 
     if (!title) {
@@ -13,10 +13,10 @@ const createTask = async (req, res) => {
     }
 
     const newTask = await db.query(
-      `INSERT INTO tasks(title, description, status, user_id)
-       VALUES($1, $2, $3, $4)
+      `INSERT INTO tasks(title, description, status, priority, user_id)
+       VALUES($1, $2, $3, $4, $5)
        RETURNING *`,
-      [title, description, status, userId]
+      [title, description, status, priority, userId]
     );
 
     res.status(201).json({
@@ -58,17 +58,18 @@ const getTasks = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { title, description, status, priority } = req.body;
 
     const updatedTask = await db.query(
       `UPDATE tasks
        SET title=$1,
            description=$2,
-           status=$3
-       WHERE id=$4
-       and user_id=$5
+           status=$3,
+           priority=$4
+       WHERE id=$5
+       AND user_id=$6
        RETURNING *`,
-      [title, description, status, id, req.user.id]
+      [title, description, status, priority, id, req.user.id]
     );
 
     if (updatedTask.rows.length === 0) {

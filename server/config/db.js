@@ -24,6 +24,7 @@ const createTasksTable = async () => {
         title VARCHAR(255) NOT NULL,
         description TEXT,
         status VARCHAR(50) DEFAULT 'Pending',
+        priority VARCHAR(50) DEFAULT 'Medium',
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
