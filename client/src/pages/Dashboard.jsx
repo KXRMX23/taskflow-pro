@@ -25,6 +25,8 @@ import {
   Legend,
 } from "recharts"
 
+import { motion } from "framer-motion";
+
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -258,11 +260,16 @@ if (loading) {
 
 return (
   <DragDropContext onDragEnd={onDragEnd}>
-    <div className={`min-h-screen transition-all duration-300 ${
+    <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    className={`min-h-screen transition-all duration-300 ${
         darkMode
             ? "bg-gray-900 text-white"
             : "bg-gray-100 text-black"
-    }`}>
+    }`}
+>
       
     <div className="flex justify-between items-center mb-8">
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-10">
@@ -342,7 +349,13 @@ return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
   {/* FIX #4: "duration 300" -> "duration-300" (3 cards below) */}
-  <div className="group bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-2xl cursor-pointer">
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0 }}
+    whileHover={{ scale: 1.03 }}
+    className="group bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300"
+>
     <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
         🟡 Pending
     </h2>
@@ -354,9 +367,15 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks waiting to be started
     </p>
-</div>
+</motion.div>
 
-  <div className="group bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-2xl cursor-pointer">
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.15 }}
+    whileHover={{ scale: 1.03 }}
+    className="group bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-2xl"
+>
     <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
         🔵 In Progress
     </h2>
@@ -368,9 +387,15 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks currently being worked on
     </p>
-</div>
+</motion.div>
 
-  <div className="group bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-105 cursor-pointer">
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.3 }}
+    whileHover={{ scale: 1.03 }}
+    className="group bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-2xl"
+>
     <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
         🟢 Completed
     </h2>
@@ -382,7 +407,7 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks that have been finished
     </p>
-  </div>
+  </motion.div>
 
 </div>
 
@@ -907,7 +932,7 @@ return (
 
 </div>
 </div>
-</div>
+</motion.div>
 </DragDropContext>
 );
 }
