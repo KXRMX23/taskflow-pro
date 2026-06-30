@@ -25,7 +25,8 @@ import {
   Legend,
 } from "recharts"
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 
 function Dashboard() {
@@ -568,7 +569,14 @@ return (
   index={index}
 >
   {(provided) => (
-    <div
+    <motion.div
+    initial={{ opacity: 0, y: 25 }}
+animate={{ opacity: 1, y: 0 }}
+exit={{ opacity: 0, scale: 0.95 }}
+transition={{
+  duration: 0.3,
+  delay: index * 0.05,
+}}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
@@ -665,7 +673,7 @@ return (
                 : "🗑 Delete"}
             </button>
           </div>
-        </div>
+        </motion.div>
             )}
           </Draggable>
       ))}
@@ -693,7 +701,14 @@ return (
   index={index}
 >
   {(provided) => (
-    <div
+    <motion.div
+  initial={{ opacity: 0, y: 25 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, scale: 0.95 }}
+  transition={{
+    duration: 0.3,
+    delay: index * 0.05,
+  }}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
@@ -790,7 +805,7 @@ return (
                 : "🗑 Delete"}
             </button>
           </div>
-        </div>
+        </motion.div>
             )}
           </Draggable>
       ))}
@@ -818,7 +833,14 @@ return (
   index={index}
 >
   {(provided) => (
-    <div
+    <motion.div
+  initial={{ opacity: 0, y: 25 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, scale: 0.95 }}
+  transition={{
+    duration: 0.3,
+    delay: index * 0.05,
+  }}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
@@ -915,7 +937,7 @@ return (
                 : "🗑 Delete"}
             </button>
           </div>
-        </div>
+        </motion.div>
             )}
           </Draggable>
       ))}
