@@ -1,22 +1,23 @@
 # 🚀 TaskFlow Pro
 
-A full-stack task management application built using the MERN stack.
+A modern full-stack Kanban Task Management application built with React, Node.js, Express, PostgreSQL, and Framer Motion.
 
-## ✨ Features
+---
+
+## 📌 Features
 
 - 🔐 JWT Authentication
 - 👤 User Registration & Login
-- ✅ Create, Read, Update and Delete Tasks
-- 🔍 Search Tasks
-- 🎯 Filter by Status
-- ↕️ Sort Tasks
+- ✅ Create, Edit & Delete Tasks
+- 📋 Kanban Board
+- 🎯 Drag & Drop Task Management
+- 🔎 Search Tasks
+- 🗂 Filter by Status
+- ↕ Sort Tasks
 - 🌙 Dark Mode
-- 📱 Responsive Mobile Design
-- 📊 Dashboard Statistics
-- ⏳ Loading States
-- 🔔 Toast Notifications
-- 🗑 Delete Confirmation
-- 📭 Empty State Illustration
+- 📊 Task Analytics Dashboard
+- 🎨 Smooth Framer Motion Animations
+- 📱 Fully Responsive Design
 
 ---
 
@@ -28,16 +29,20 @@ A full-stack task management application built using the MERN stack.
 - Vite
 - Tailwind CSS
 - Axios
-- React Router
+- React Beautiful DnD
+- Recharts
+- Framer Motion
+- React Hot Toast
+- Lucide React
 
 ### Backend
 
 - Node.js
 - Express.js
-- MongoDB
-- Mongoose
+- PostgreSQL
 - JWT Authentication
 - bcrypt
+- CORS
 
 ---
 
@@ -46,41 +51,37 @@ A full-stack task management application built using the MERN stack.
 ```
 client/
 server/
+database/
+docs/
 ```
 
 ---
 
-## 🚀 Getting Started
+## ⚙ Installation
 
-### Clone the repository
+### Clone Repository
 
 ```bash
 git clone https://github.com/KXRMX23/taskflow-pro.git
 ```
 
-### Install dependencies
-
-Frontend
+### Install Dependencies
 
 ```bash
 cd client
 npm install
-```
 
-Backend
-
-```bash
-cd server
+cd ../server
 npm install
 ```
 
-### Run Backend
+### Start Backend
 
 ```bash
 npm run dev
 ```
 
-### Run Frontend
+### Start Frontend
 
 ```bash
 cd client
@@ -89,18 +90,43 @@ npm run dev
 
 ---
 
-## 📸 Screenshots
+## ✨ Major Features
 
-Coming Soon
+- Secure Authentication
+- Beautiful Dashboard
+- Task Analytics
+- Responsive UI
+- Drag & Drop Workflow
+- Animated Interface
+- Dark Mode
+- Empty State
+- Loading Screens
 
 ---
 
-## 🌍 Live Demo
+## 📊 Analytics
 
-Coming Soon
+The dashboard displays:
+
+- Pending Tasks
+- In Progress Tasks
+- Completed Tasks
+
+using interactive charts powered by Recharts.
+
+---
+
+## 🚀 Future Improvements
+
+- Email Notifications
+- Due Dates
+- Team Collaboration
+- File Attachments
+- Calendar View
+- Mobile Application
 
 ---
 
 ## 👨‍💻 Author
 
-K Ritvick
+**K Ritvick**
