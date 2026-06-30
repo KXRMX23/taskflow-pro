@@ -342,12 +342,12 @@ return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
   {/* FIX #4: "duration 300" -> "duration-300" (3 cards below) */}
-  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+  <div className="group bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-2xl cursor-pointer">
     <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
         🟡 Pending
     </h2>
 
-    <p className="text-5xl font-extrabold mt-3">
+    <p className="text-5xl font-extrabold mt-2 transition-transform duration-300 group-hover:scale-110">
         {pendingCount}
     </p>
 
@@ -356,12 +356,12 @@ return (
     </p>
 </div>
 
-  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+  <div className="group bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-2xl cursor-pointer">
     <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
         🔵 In Progress
     </h2>
 
-    <p className="text-5xl font-extrabold mt-3">
+    <p className="text-5xl font-extrabold mt-2 transition-transform duration-300 group-hover:scale-110">
         {inProgressCount}
     </p>
 
@@ -370,12 +370,12 @@ return (
     </p>
 </div>
 
-  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+  <div className="group bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-105 cursor-pointer">
     <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
         🟢 Completed
     </h2>
 
-    <p className="text-5xl font-extrabold mt-3">
+    <p className="text-5xl font-extrabold mt-2 transition-transform duration-300 group-hover:scale-110">
         {completedCount}
     </p>
 
@@ -488,7 +488,7 @@ return (
 
     <button type="submit"
         disabled={submitting}
-        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+        className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
         {
     submitting
         ? "Saving..."
@@ -625,7 +625,7 @@ return (
           <div className="flex flex-wrap gap-3 mt-6">
             <button
               onClick={() => handleEditChange(task)}
-              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
             >
               ✏️ Edit
             </button>
@@ -633,7 +633,7 @@ return (
             <button
               onClick={() => deleteTask(task.id)}
               disabled={deletingTaskId === task.id}
-              className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+              className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
             >
               {deletingTaskId === task.id
                 ? "🗑 Deleting..."
