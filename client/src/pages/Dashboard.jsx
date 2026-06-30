@@ -236,8 +236,22 @@ const onDragEnd = async (result) => {
 
 if (loading) {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white text-2xl font-bold">
-            Loading tasks...
+        <div
+            className={`min-h-screen flex flex-col items-center justify-center transition-all duration-300 ${
+                darkMode
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-gray-900"
+            }`}
+        >
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+
+            <h2 className="text-2xl font-bold mb-2">
+                Loading your tasks...
+            </h2>
+
+            <p className="text-gray-500 dark:text-gray-400">
+                Please wait while we prepare your dashboard.
+            </p>
         </div>
     );
 }
@@ -328,19 +342,46 @@ return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
   {/* FIX #4: "duration 300" -> "duration-300" (3 cards below) */}
-  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
-    <h2 className="text-xl font-bold text-yellow-700">Pending</h2>
-    <p className="text-4xl font-bold mt-2">{pendingCount}</p>
-  </div>
+  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+    <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
+        🟡 Pending
+    </h2>
 
-  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
-    <h2 className="text-xl font-bold text-blue-700">In Progress</h2>
-    <p className="text-4xl font-bold mt-2">{inProgressCount}</p>
-  </div>
+    <p className="text-5xl font-extrabold mt-3">
+        {pendingCount}
+    </p>
 
-  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer hover:scale-105">
-    <h2 className="text-xl font-bold text-green-700">Completed</h2>
-    <p className="text-4xl font-bold mt-2">{completedCount}</p>
+    <p className="text-sm text-gray-600 mt-2">
+        Tasks waiting to be started
+    </p>
+</div>
+
+  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+    <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
+        🔵 In Progress
+    </h2>
+
+    <p className="text-5xl font-extrabold mt-3">
+        {inProgressCount}
+    </p>
+
+    <p className="text-sm text-gray-600 mt-2">
+        Tasks currently being worked on
+    </p>
+</div>
+
+  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+    <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
+        🟢 Completed
+    </h2>
+
+    <p className="text-5xl font-extrabold mt-3">
+        {completedCount}
+    </p>
+
+    <p className="text-sm text-gray-600 mt-2">
+        Tasks that have been finished
+    </p>
   </div>
 
 </div>
@@ -507,10 +548,10 @@ return (
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       
-          className={`group rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] p-6 mb-8 border transition-all duration-300 ease-out ${
+          className={`group rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl ${
             darkMode
-              ? "bg-gray-800 border-gray-700"
-              : "bg-white border-gray-200"
+              ? "bg-gray-800 border-gray-700 hover:border-blue-500"
+              : "bg-white border-gray-200 hover:border-blue-400"
           }`}
         >
           <h3
