@@ -438,7 +438,10 @@ return (
   </ResponsiveContainer>
 </div>
 
-   <form
+   <motion.form
+   initial={{ opacity: 0, y: 30 }}
+   animate={{ opacity: 1, y: 0 }}
+   transition={{ duration: 0.5 }}
   onSubmit={handleSubmit}
   className={`p-6 rounded-2xl shadow-lg mb-10 max-w-xl transition-all duration-300 ${
     darkMode
@@ -527,7 +530,7 @@ return (
 
     <hr/>
 
-</form>
+</motion.form>
 
      <div>
   {filteredTasks.length === 0 ? (
