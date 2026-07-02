@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 
@@ -400,8 +400,21 @@ return (
     <motion.div
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.4, delay: 0 }}
-  className="group bg-yellow-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
+  
+  whileHover={{
+    y: -8,
+    scale: 1.02,
+  }}
+
+  whileTap={{
+    scale: 0.98,
+  }}
+
+  transition={{
+    duration: 0.2,
+  }}
+
+  className="group bg-yellow-100 rounded-xl shadow-lg hover:shadow-2xl hover:ring-2 hover:ring-yellow-200 cursor-pointer p-6"
   >
     <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
         🟡 Pending
@@ -419,8 +432,21 @@ return (
   <motion.div
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.4, delay: 0.3 }}
-  className="group bg-blue-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
+  
+  whileHover={{
+    y: -8,
+    scale: 1.02,
+  }}
+
+  whileTap={{
+    scale: 0.98,
+  }}
+
+  transition={{
+    duration: 0.2,
+  }}
+
+  className="group bg-blue-100 rounded-xl shadow-lg hover:shadow-2xl hover:ring-2 hover:ring-blue-200 cursor-pointer p-6"
 >
     <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
         🔵 In Progress
@@ -438,8 +464,21 @@ return (
   <motion.div
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.4, delay: 0.6 }}
-  className="group bg-green-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
+
+  whileHover={{
+    y: -8,
+    scale: 1.02,
+  }}
+
+  whileTap={{
+    scale: 0.98,
+  }}
+
+  transition={{
+    duration: 0.2,
+  }}
+  
+  className="group bg-green-100 rounded-xl shadow-lg hover:shadow-2xl hover:ring-2 hover:ring-green-200 cursor-pointer p-6"
 >
     <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
         🟢 Completed
@@ -506,6 +545,7 @@ return (
   </button>
 </div>
 
+<AnimatePresence>
   {showForm && (
    <motion.form
    initial={{ opacity: 0, y: 30 }}
@@ -596,6 +636,7 @@ return (
 
 </motion.form>
   )}
+</AnimatePresence>
 
      <div>
   {filteredTasks.length === 0 ? (
