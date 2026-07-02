@@ -349,7 +349,7 @@ return (
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.4, delay: 0 }}
-  className="group bg-yellow-100 rounded-xl shadow-lg p-6 ..."
+  className="group bg-yellow-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
   >
     <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
         🟡 Pending
@@ -565,10 +565,13 @@ return (
   index={index}
 >
   {(provided) => (
-    <div
+    <motion.div
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
+      initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, delay: index * 0.08 }}
       
           className={`group rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl ${
             darkMode
@@ -662,7 +665,7 @@ return (
                 : "🗑 Delete"}
             </button>
           </div>
-        </div>
+        </motion.div>
             )}
           </Draggable>
       ))}
