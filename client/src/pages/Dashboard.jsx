@@ -3,6 +3,7 @@ import API from "../services/api";
 import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 
 import {
@@ -16,7 +17,8 @@ import {
   Moon,
   Sun,
   ClipboardList,
-  Plus
+  Plus,
+  LogOut,
 } from "lucide-react"
 
 import {
@@ -36,6 +38,9 @@ function Dashboard() {
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const navigate = useNavigate();
+
+
 
   // FIX #2: was checking for "true" but we store "dark"/"light"
   const [darkMode, setDarkMode] = useState(() => {
@@ -50,10 +55,31 @@ function Dashboard() {
     priority: "Medium"
   });
 
+
+
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
+
+  const hour = new Date().getHours();
+
+let greeting = "Good Evening";
+
+if (hour < 12) {
+  greeting = "Good Morning";
+} else if (hour < 18) {
+  greeting = "Good Afternoon";
+}
+
+const userName = localStorage.getItem("name") || "User";
+
+const today = new Date().toLocaleDateString("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
 
   const pendingCount = tasks.filter((task) => task.status === "pending").length;
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
@@ -140,6 +166,15 @@ const completedTasks = sortedTasks.filter((task) => task.status === "completed")
       priority: task.priority,
     });
   };
+
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  navigate("/");
+};
+
+const toggleTheme = () => {
+  setDarkMode((prev) => !prev);
+};
 
     const handleSubmit = async (e) => {
     e.preventDefault();
@@ -267,42 +302,58 @@ return (
             : "bg-gray-100 text-black"
     }`}>
       
-    <div className="flex justify-between items-center mb-8">
+
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-10">
-<div className="flex items-center gap-5 mb-10">
-    <div className="bg-blue-600 text-white w-20 h-20 rounded-2xl shadow-lg flex items-center justify-center flex-shrink-0">
-        <ClipboardList size={42} />
+
+   <div className="flex justify-between items-center mb-10">
+
+  <div>
+    <h1 className="text-5xl font-extrabold">
+      {greeting}, {userName} 👋
+    </h1>
+
+    <p className="text-gray-500 dark:text-gray-400 mt-2">
+      {today}
+    </p>
+  </div>
+
+  <div className="flex items-center gap-4">
+
+    <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+      {userName.charAt(0).toUpperCase()}
     </div>
 
-    <div>
-        <h1 className="text-5xl font-extrabold tracking-tight">
-            TaskFlow Pro
-        </h1>
+    <button
+      onClick={handleLogout}
+      className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg transition-all duration-300"
+    >
+      <LogOut size={20} />
+      Logout
+    </button>
 
-        <p className="text-lg text-gray-500 dark:text-gray-400 mt-1">
-            Organize your work efficiently
-        </p>
-    </div>
+  </div>
+
 </div>
+      
       <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="mb-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition"
-      >
+  onClick={toggleTheme}
+  className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-lg transition-all duration-300"
+>
+  {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+  <span>
+    {darkMode ? "Light Mode" : "Dark Mode"}
+  </span>
+</button>
         
-    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-    <span>
-        {darkMode ? "Light Mode" : "Dark Mode"}
-    </span>
-      </button>
-
-      <div className="flex flex-col md:flex-row gap-6 mb-10">
+    
+     <div className="flex flex-col md:flex-row gap-4 mb-10">
 
     <input
   type="text"
   placeholder="🔍 Search tasks..."
   value={searchTerm}
   onChange={(e) => setSearchTerm(e.target.value)}
-  className={`flex-1 rounded-xl border px-5 py-3 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none ${
+  className={`flex-1 rounded-xl border px-6 py-3 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none ${
     darkMode
       ? "bg-gray-800 text-white border-gray-700"
       : "bg-white border-gray-300"
@@ -933,7 +984,7 @@ return (
 </div>
 
 
-</div>
+
 </div>
 </div>
 </DragDropContext>
