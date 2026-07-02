@@ -39,6 +39,7 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(true);
 
 
 
@@ -495,18 +496,17 @@ return (
   </h2>
 
   <button
-    onClick={() =>
-      document
-        .querySelector("form")
-        ?.scrollIntoView({ behavior: "smooth" })
-    }
+    onClick={() => setShowForm(!showForm)}
     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
   >
+    <>
     <Plus size={20} />
-    Create Task
+    {showForm ? "Hide Form" : "Create Task"}
+    </>
   </button>
 </div>
 
+  {showForm && (
    <motion.form
    initial={{ opacity: 0, y: 30 }}
    animate={{ opacity: 1, y: 0 }}
@@ -595,6 +595,7 @@ return (
     <hr/>
 
 </motion.form>
+  )}
 
      <div>
   {filteredTasks.length === 0 ? (
