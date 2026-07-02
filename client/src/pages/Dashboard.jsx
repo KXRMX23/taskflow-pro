@@ -28,7 +28,12 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
-} from "recharts"
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 
 
 function Dashboard() {
@@ -106,6 +111,21 @@ const todaysTasks = tasks.filter((task) => {
   { name: "Pending", value: pendingCount },
   { name: "In Progress", value: inProgressCount },
   { name: "Completed", value: completedCount },
+];
+
+const barChartData = [
+  {
+    name: "Pending",
+    tasks: pendingCount,
+  },
+  {
+    name: "In Progress",
+    tasks: inProgressCount,
+  },
+  {
+    name: "Completed",
+    tasks: completedCount,
+  },
 ];
 
 const COLORS = ["#FACC15", "#3B82F6", "#22C55E"];
@@ -600,7 +620,7 @@ return (
   }`}
 >
   <h2 className="text-2xl font-bold mb-6">
-    Task Analytics
+    📈 Task Analytics
   </h2>
 
   <ResponsiveContainer width="100%" height={300}>
@@ -612,6 +632,8 @@ return (
         outerRadius={100}
         dataKey="value"
         label
+        isAnimationActive={true}
+        animationDuration={1200}
       >
         {chartData.map((entry, index) => (
           <Cell
@@ -621,10 +643,57 @@ return (
         ))}
       </Pie>
 
-      <Tooltip />
-      <Legend />
+      <Tooltip 
+      contentStyle={{
+    borderRadius: "12px",
+    border: "none",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+  }}
+
+      />
+      <Legend 
+        verticalAlign="bottom"
+        height={36}
+      />
     </PieChart>
   </ResponsiveContainer>
+
+  <motion.div
+  initial={{ opacity: 0, x: 40 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.5 }}
+  className={`rounded-2xl shadow-xl p-6 ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <h2 className="text-2xl font-bold mb-6">
+    📊 Task Overview
+  </h2>
+
+  <ResponsiveContainer width="100%" height={320}>
+    <BarChart data={barChartData}>
+      <CartesianGrid strokeDasharray="3 3" />
+
+      <XAxis dataKey="name" />
+
+      <YAxis allowDecimals={false} />
+
+      <Tooltip 
+      contentStyle={{
+    borderRadius: "12px",
+    border: "none",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+  }}
+      />
+
+      <Bar
+        dataKey="tasks"
+        radius={[10, 10, 0, 0]}
+        animationDuration={1200}
+      />
+    </BarChart>
+  </ResponsiveContainer>
+</motion.div>
 </div>
 
 <div className="flex justify-between items-center mb-6">
