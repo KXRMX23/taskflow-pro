@@ -3,6 +3,8 @@ import API from "../services/api";
 import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
 import { motion } from "framer-motion";
+
+
 import {
   DragDropContext,
   Droppable,
@@ -343,7 +345,12 @@ return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
   {/* FIX #4: "duration 300" -> "duration-300" (3 cards below) */}
-  <div className="bg-yellow-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+    <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0 }}
+  className="group bg-yellow-100 rounded-xl shadow-lg p-6 ..."
+  >
     <h2 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
         🟡 Pending
     </h2>
@@ -355,9 +362,14 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks waiting to be started
     </p>
-</div>
+</motion.div>
 
-  <div className="bg-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+  <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0.3 }}
+  className="group bg-blue-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
+>
     <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
         🔵 In Progress
     </h2>
@@ -369,9 +381,14 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks currently being worked on
     </p>
-</div>
+</motion.div>
 
-  <div className="bg-green-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+  <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0.6 }}
+  className="group bg-green-100 rounded-xl shadow-lg p-6 hover:scale-105 transition"
+>
     <h2 className="text-xl font-bold text-green-700 flex items-center gap-2">
         🟢 Completed
     </h2>
@@ -383,7 +400,7 @@ return (
     <p className="text-sm text-gray-600 mt-2">
         Tasks that have been finished
     </p>
-  </div>
+  </motion.div>
 
 </div>
 
