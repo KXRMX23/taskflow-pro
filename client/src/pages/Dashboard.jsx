@@ -489,12 +489,30 @@ return (
   </ResponsiveContainer>
 </div>
 
+<div className="flex justify-between items-center mb-6">
+  <h2 className="text-3xl font-bold">
+    Task Manager
+  </h2>
+
+  <button
+    onClick={() =>
+      document
+        .querySelector("form")
+        ?.scrollIntoView({ behavior: "smooth" })
+    }
+    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
+  >
+    <Plus size={20} />
+    Create Task
+  </button>
+</div>
+
    <motion.form
    initial={{ opacity: 0, y: 30 }}
    animate={{ opacity: 1, y: 0 }}
    transition={{ duration: 0.5 }}
   onSubmit={handleSubmit}
-  className={`p-6 rounded-2xl shadow-lg mb-10 max-w-xl transition-all duration-300 ${
+  className={`w-full p-6 rounded-2xl shadow-lg mb-10 transition-all duration-300 ${
     darkMode
       ? "bg-gray-800"
       : "bg-white"
@@ -570,13 +588,8 @@ return (
         ? "Saving..."
         : editingTaskId
             ? "Update Task"
-            : (
-              <>
-              <Plus size={18} />
-              <span>Create Task</span>
-              </>
-            )
-} 
+            : "Save Task"}
+            
     </motion.button>
 
     <hr/>
