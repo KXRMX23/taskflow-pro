@@ -641,7 +641,11 @@ return (
      <div>
   {filteredTasks.length === 0 ? (
     /* FIX #6: empty state now respects dark mode */
-    <div className={`rounded-xl shadow-lg p-10 text-center mt-6 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+    <motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.4 }}
+  className={`rounded-xl shadow-lg p-10 text-center mt-6 ${ darkMode ? "bg-gray-800" : "bg-white"}`}>
       <img
         src={EmptyState}
         alt="No Tasks"
@@ -655,7 +659,7 @@ return (
       <p className={`mt-3 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
         Try another keyword or create a new task to get started!
       </p>
-    </div>
+    </motion.div>
   ) : (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div>
