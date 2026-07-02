@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
+import { motion } from "framer-motion";
 import {
   DragDropContext,
   Droppable,
@@ -486,7 +487,11 @@ return (
   <option value="High">🔴 High Priority</option>
 </select>
 
-    <button type="submit"
+    <motion.button
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.96 }}
+        transition={{ duration: 0.2 }}
+        type="submit"
         disabled={submitting}
         className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
         {
@@ -501,7 +506,7 @@ return (
               </>
             )
 } 
-    </button>
+    </motion.button>
 
     <hr/>
 
