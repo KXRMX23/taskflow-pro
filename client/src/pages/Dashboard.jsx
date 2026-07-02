@@ -86,6 +86,22 @@ const today = new Date().toLocaleDateString("en-US", {
   const inProgressCount = tasks.filter((task) => task.status === "in-progress").length;
   const completedCount = tasks.filter((task) => task.status === "completed").length; 
  
+  const totalTasks = tasks.length;
+
+const completionRate =
+  totalTasks === 0
+    ? 0
+    : Math.round((completedCount / totalTasks) * 100);
+
+const highPriorityCount = tasks.filter(
+  (task) => task.priority === "High"
+).length;
+
+const todaysTasks = tasks.filter((task) => {
+  const today = new Date().toDateString();
+  return new Date(task.createdAt).toDateString() === today;
+}).length;
+
   const chartData = [
   { name: "Pending", value: pendingCount },
   { name: "In Progress", value: inProgressCount },
@@ -393,6 +409,88 @@ return (
     </select>
 
 </div>
+
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0 }}
+  whileHover={{
+    y: -6,
+    scale: 1.03,
+  }}
+  whileTap={{
+    scale: 0.98,
+  }}
+  className={`rounded-2xl p-5 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <p className="text-sm text-gray-500">📋 Total Tasks</p>
+  <h2 className="text-3xl font-bold mt-2">{totalTasks}</h2>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0.1 }}
+  whileHover={{
+    y: -6,
+    scale: 1.03,
+  }}
+  whileTap={{
+    scale: 0.98,
+  }}
+  className={`rounded-2xl p-5 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <p className="text-sm text-gray-500">✅ Completion Rate</p>
+  <h2 className="text-3xl font-bold mt-2">{completionRate}%</h2>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0.2 }}
+  whileHover={{
+    y: -6,
+    scale: 1.03,
+  }}
+  whileTap={{
+    scale: 0.98,
+  }}
+  className={`rounded-2xl p-5 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <p className="text-sm text-gray-500">🔥 High Priority</p>
+  <h2 className="text-3xl font-bold mt-2">{highPriorityCount}</h2>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, delay: 0.3 }}
+  whileHover={{
+    y: -6,
+    scale: 1.03,
+  }}
+  whileTap={{
+    scale: 0.98,
+  }}
+  className={`rounded-2xl p-5 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer ${
+    darkMode ? "bg-gray-800" : "bg-white"
+  }`}
+>
+  <p className="text-sm text-gray-500">📅 Today's Tasks</p>
+  <h2 className="text-3xl font-bold mt-2">{todaysTasks}</h2>
+</motion.div>
+
+  </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
