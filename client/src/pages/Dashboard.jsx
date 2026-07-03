@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import CountUp from "react-countup";
 
 
 import {
@@ -104,7 +105,7 @@ const highPriorityCount = tasks.filter(
 
 const todaysTasks = tasks.filter((task) => {
   const today = new Date().toDateString();
-  return new Date(task.createdAt).toDateString() === today;
+  return new Date(task.created_at).toDateString() === today;
 }).length;
 
   const chartData = [
@@ -333,7 +334,11 @@ if (loading) {
 
 return (
   <DragDropContext onDragEnd={onDragEnd}>
-    <div className={`min-h-screen transition-all duration-300 ${
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`min-h-screen transition-all duration-300 ${
         darkMode
             ? "bg-gray-900 text-white"
             : "bg-gray-100 text-black"
@@ -374,7 +379,7 @@ return (
       
       <button
   onClick={toggleTheme}
-  className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-lg transition-all duration-300"
+  className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-lg transition-all duration-300 mb-5"
 >
   {darkMode ? <Sun size={18} /> : <Moon size={18} />}
   <span>
@@ -450,6 +455,7 @@ return (
 >
   <p className="text-sm text-gray-500">📋 Total Tasks</p>
   <h2 className="text-3xl font-bold mt-2">{totalTasks}</h2>
+  
 </motion.div>
 
 <motion.div
@@ -506,7 +512,7 @@ return (
   }`}
 >
   <p className="text-sm text-gray-500">📅 Today's Tasks</p>
-  <h2 className="text-3xl font-bold mt-2">{todaysTasks}</h2>
+  <h2 className="text-3xl font-bold mt-2">{totalTasks}</h2>
 </motion.div>
 
   </div>
@@ -571,7 +577,7 @@ return (
     </h2>
 
     <p className="text-5xl font-extrabold mt-3">
-        {inProgressCount}
+        {inProgressCount} 
     </p>
 
     <p className="text-sm text-gray-600 mt-2">
@@ -603,7 +609,7 @@ return (
     </h2>
 
     <p className="text-5xl font-extrabold mt-3">
-        {completedCount}
+        {completedCount} 
     </p>
 
     <p className="text-sm text-gray-600 mt-2">
@@ -614,7 +620,8 @@ return (
 </div>
 
 {/* Task Analytics */}
-<div
+
+ <div
   className={`p-6 rounded-2xl shadow-lg mb-10 ${
     darkMode ? "bg-gray-800" : "bg-white"
   }`}
@@ -671,8 +678,11 @@ return (
   </h2>
 
   <ResponsiveContainer width="100%" height={320}>
-    <BarChart data={barChartData}>
-      <CartesianGrid strokeDasharray="3 3" />
+    <BarChart
+    data={barChartData}
+    barCategoryGap="20%"
+    >
+      <CartesianGrid strokeDasharray="5 5" stroke="#E5E7EB" />
 
       <XAxis dataKey="name" />
 
@@ -690,11 +700,27 @@ return (
         dataKey="tasks"
         radius={[10, 10, 0, 0]}
         animationDuration={1200}
-      />
+        >
+          {barChartData.map((entry, index) => (
+            <Cell
+                key={`cell-${index}`}
+                fill={
+                  entry.name === "Pending"
+                    ? "#FACC15"
+                    : entry.name === "In Progress"
+                    ? "#3B82F6"
+                    : "#22C55E"
+                }
+            />
+          ))
+                }
+
+        </Bar>
     </BarChart>
   </ResponsiveContainer>
 </motion.div>
-</div>
+</div> 
+
 
 <div className="flex justify-between items-center mb-6">
   <h2 className="text-3xl font-bold">
@@ -743,10 +769,11 @@ return (
 
     <textarea
         name="description"
-        placeholder="Task Description"
+        placeholder="Task Description (Press Enter for each task)"
         value={newTask.description}
         onChange={handleChange}
-        className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+        rows={5}
+        className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 resize-none ${
   darkMode
     ? "bg-gray-700 text-white border-gray-600 placeholder-gray-400"
     : "bg-white text-black border-gray-300"
@@ -799,7 +826,7 @@ return (
             
     </motion.button>
 
-    <hr/>
+
 
 </motion.form>
   )}
@@ -878,13 +905,20 @@ return (
             {task.title}
           </h3>
 
-          <p
-            className={`mb-5 leading-7 transition-all duration-300 group-hover:text-black ${
-              darkMode ? "text-gray-300" : "text-gray-600"
-            }`}
-          >
-            {task.description}
-          </p>
+          <ul
+className={`mb-5 list-disc list-inside space-y-2 leading-7 ${
+darkMode ? "text-gray-300" : "text-gray-600"
+}`}
+>
+{task.description
+.split("\n")
+.filter(item => item.trim() !== "")
+.map((item, index) => (
+<li key={index}>
+{item.trim()}
+</li>
+))}
+</ul>
 
           <p
   className={`text-sm mb-4 ${
@@ -1212,7 +1246,7 @@ return (
 
 
 </div>
-</div>
+</motion.div>
 </DragDropContext>
 );
 }
