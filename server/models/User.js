@@ -12,17 +12,16 @@ const createUsersTable = async () => {
     );
   `;
 
-  try {
-    await pool.query(query);
+try {
+await pool.query(query);
+console.log("✅ CREATE TABLE executed");
 
-    await pool.query(`
-      ALTER TABLE users
-      ADD COLUMN IF NOT EXISTS profile_image TEXT;
-    `);
-    console.log("✅ Users table created");
-  } catch (err) {
-    console.error("❌ Error creating users table:", err);
-  }
-};
+await pool.query(`
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS profile_image TEXT;
+`);
 
-module.exports = createUsersTable; 
+console.log("✅ profile_image column verified");
+} catch (err) {
+console.error(err);
+}}
