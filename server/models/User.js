@@ -24,4 +24,8 @@ ADD COLUMN IF NOT EXISTS profile_image TEXT;
 console.log("✅ profile_image column verified");
 } catch (err) {
 console.error(err);
-}}
+}
+
+};
+
+module.exports = createUsersTable;
