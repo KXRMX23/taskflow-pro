@@ -14,6 +14,11 @@ const createUsersTable = async () => {
 
   try {
     await pool.query(query);
+
+    await pool.query(`
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS profile_image TEXT;
+    `);
     console.log("✅ Users table created");
   } catch (err) {
     console.error("❌ Error creating users table:", err);
