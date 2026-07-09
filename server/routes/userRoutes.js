@@ -5,7 +5,10 @@ const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
 const {
   uploadProfileImage,
+  getCurrentUser,
 } = require("../controllers/userController");
+
+router.get("/me", authMiddleware, getCurrentUser);
 
 router.put(
   "/profile-image",

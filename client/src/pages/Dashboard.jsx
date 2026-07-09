@@ -65,6 +65,8 @@ function Dashboard() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
 
+  const [user, setUser] = useState(null);
+
   const hour = new Date().getHours();
 
   let greeting = "Good Evening";
@@ -74,7 +76,7 @@ function Dashboard() {
     greeting = "Good Afternoon";
   }
 
-  const userName = localStorage.getItem("name") || "User";
+  const userName = user?.name || "User";
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -147,8 +149,10 @@ function Dashboard() {
 
         console.log("Response:", res.data);
         console.log("Is Array:", Array.isArray(res.data));
-        
         setTasks(res.data);
+
+        const userRes = await API.get("/users/me");
+        setUser(userRes.data);
         setLoading(false);
       } catch (err) {
         console.log(err.response?.data || err.message);
@@ -384,9 +388,18 @@ function Dashboard() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
-                {userName.charAt(0).toUpperCase()}
-              </div>
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
+{user?.profile_image ? (
+<img
+src={user.profile_image}
+alt="Profile"
+className="w-full h-full rounded-full object-cover"
+/>
+) : (
+userName.charAt(0).toUpperCase()
+)}
+</div>
+
 
               <button
                 onClick={toggleTheme}
