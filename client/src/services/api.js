@@ -15,4 +15,12 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+export const uploadProfileImage = (formData) => {
+  return API.put("/users/profile-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 export default API;
