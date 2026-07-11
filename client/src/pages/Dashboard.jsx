@@ -45,6 +45,7 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(true);
@@ -122,8 +123,21 @@ function Dashboard() {
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || task.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesPriority = priorityFilter === "all" || task.priority === priorityFilter;
+    console.log("priorityFilter:", priorityFilter);
+
+    console.log({
+      title: task.title, 
+      status: task.status,
+      priority: task.priority,
+      matchesSearch,
+      matchesStatus,
+      matchesPriority
+    });
+
+    return matchesSearch && matchesStatus && matchesPriority;
   });
+
 
   const sortedTasks = [...filteredTasks].sort((a, b) => {
     switch (sortBy) {
@@ -464,6 +478,19 @@ userName.charAt(0).toUpperCase()
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
+            </select>
+
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className={`rounded-xl border px-4 py-3 shadow-sm transition ${
+                darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white border-gray-300"
+              }`}
+            >
+              <option value="all">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
 
