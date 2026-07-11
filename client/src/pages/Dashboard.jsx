@@ -58,6 +58,7 @@ function Dashboard() {
     description: "",
     status: "pending",
     priority: "Medium",
+    tags: "",
    });
  
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -203,7 +204,7 @@ function Dashboard() {
         setTasks([...tasks, response.data.task]);
         toast.success("Task created successfully!");
       }
-      setNewTask({ title: "", description: "", status: "pending", priority: "Medium" });
+      setNewTask({ title: "", description: "", status: "pending", priority: "Medium", tags: "", });
       setSubmitting(false);
     } catch (err) {
       setSubmitting(false);
@@ -334,6 +335,14 @@ function Dashboard() {
                 : "🟢 Low Priority"}
             </span>
           </p>
+
+          {task.tags && (
+<p className="mb-4">
+<span className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-700">
+🏷️ {task.tags}
+</span>
+</p>
+)}
 
           <div className="flex flex-wrap gap-3 mt-6">
             <button
@@ -703,6 +712,19 @@ userName.charAt(0).toUpperCase()
                   <option value="Medium">🟡 Medium Priority</option>
                   <option value="High">🔴 High Priority</option>
                 </select>
+
+                <input
+type="text"
+name="tags"
+placeholder="Tags (Work, Study, Personal)"
+value={newTask.tags}
+onChange={handleChange}
+className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+darkMode
+? "bg-gray-700 text-white border-gray-600"
+: "bg-white text-black border-gray-300"
+}`}
+/>
 
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}

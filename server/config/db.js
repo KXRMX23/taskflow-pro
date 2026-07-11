@@ -25,10 +25,18 @@ const createTasksTable = async () => {
         description TEXT,
         status VARCHAR(50) DEFAULT 'Pending',
         priority VARCHAR(50) DEFAULT 'Medium',
+        tags TEXT DEFAULT '',
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    await pool.query(`
+      ALTER TABLE tasks
+      ADD COLUMN IF NOT EXISTS tags TEXT DEFAULT '';
+    `); 
+
+    console.log("✅ tags column verified");
 
     console.log("✅ Tasks table created");
   } catch (error) {
