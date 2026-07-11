@@ -282,20 +282,7 @@ function Dashboard() {
             {task.title}
           </h3>
 
-          <div className="mb-3">
-<span
-className={`px-3 py-1 rounded-full text-sm font-semibold text-white ${
-task.priority === "High"
-? "bg-red-500"
-: task.priority === "Medium"
-? "bg-yellow-500"
-: "bg-green-500"
-}`}
->
-{task.priority} Priority
-</span>
-</div>
-
+          
 
            <div className={`mb-5 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
 {task.description.includes("\n") ? (
