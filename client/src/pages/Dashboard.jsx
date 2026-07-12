@@ -443,9 +443,9 @@ new Date(task.due_date).toDateString() === selectedDateStr)
           darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 pt-12 pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:pt-10 pb-10">
            {/* Header */}
-          <div className="flex justify-between items-center mb-10">
+          <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6 mb-10">
             <div>
               <h1 className="text-5xl font-extrabold">
                 {greeting}, {userName} 👋
@@ -453,7 +453,7 @@ new Date(task.due_date).toDateString() === selectedDateStr)
               <p className="text-gray-500 dark:text-gray-400 mt-2">{today}</p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 self-start lg:self-auto">
               <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
 {user?.profile_image ? (
 <img
@@ -536,7 +536,7 @@ userName.charAt(0).toUpperCase()
           </div>
 
           {/* Summary stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
