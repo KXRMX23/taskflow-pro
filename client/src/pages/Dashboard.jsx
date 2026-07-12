@@ -60,6 +60,7 @@ function Dashboard() {
     status: "pending",
     priority: "Medium",
     tags: "",
+    due_date: "",
    });
  
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -218,7 +219,7 @@ function Dashboard() {
         setTasks([...tasks, response.data.task]);
         toast.success("Task created successfully!");
       }
-      setNewTask({ title: "", description: "", status: "pending", priority: "Medium", tags: "", });
+      setNewTask({ title: "", description: "", status: "pending", priority: "Medium", tags: "", due_date: "", });
       setSubmitting(false);
     } catch (err) {
       setSubmitting(false);
@@ -262,8 +263,12 @@ function Dashboard() {
   };
 
   // Reusable card — used by all three kanban columns below
-  const TaskCard = ({ task, index }) => (
-    <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
+  const TaskCard = ({ task, index }) => {
+
+    const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== "completed";
+    return (
+     
+     <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
       {(provided) => (
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -274,9 +279,11 @@ function Dashboard() {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={`group rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] p-6 mb-8 border transition-all duration-300 ease-out ${
-            darkMode
-              ? "bg-gray-800 border-gray-700 hover:border-blue-500"
-              : "bg-white border-gray-200 hover:border-blue-400"
+            isOverdue
+              ? "bg-white border-2 border-red-500"
+              : darkMode
+                ? "bg-gray-800 border-gray-700 hover:border-blue-500"
+                : "bg-white border-gray-200 hover:border-blue-400"
           }`}
         >
           <div
@@ -317,6 +324,12 @@ function Dashboard() {
           <p className={`text-sm mb-4 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             📅 Created: {new Date(task.created_at).toLocaleDateString()}
           </p>
+
+          {task.due_date && (
+            <p className={`text-sm mb-4 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+              🕒 Due: {new Date(task.due_date).toLocaleDateString()}
+            </p>
+          )}
 
           <p className="mb-4">
             <span
@@ -377,6 +390,8 @@ function Dashboard() {
       )}
     </Draggable>
   );
+};
+
 
   if (loading) {
     return (
@@ -747,6 +762,19 @@ placeholder="Tags (Work, Study, Personal)"
 value={newTask.tags}
 onChange={handleChange}
 className={`w-full border rounded-lg p-3 mb-4 transition-all duration-300 ${
+darkMode
+? "bg-gray-700 text-white border-gray-600"
+: "bg-white text-black border-gray-300"
+}`}
+/>
+
+<input
+type="date"
+name="due_date"
+value={newTask.due_date}
+onChange={handleChange}
+className={`w-full border rounded-lg p-3 mb-4 transition
+${
 darkMode
 ? "bg-gray-700 text-white border-gray-600"
 : "bg-white text-black border-gray-300"
