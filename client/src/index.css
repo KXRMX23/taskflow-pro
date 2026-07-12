@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+.has-due-date {
+background: #3b82f6 !important;
+color: white !important;
+border-radius: 9999px !important;
+font-weight: bold !important;
+}
+
+.today-tile {
+outline: 3px solid #facc15;
+border-radius: 9999px !important;
+}

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import EmptyState from "../assets/empty-state.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import Calendar from "react-calendar";
 
 
 
@@ -47,6 +48,8 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(true);
 
@@ -154,9 +157,28 @@ function Dashboard() {
     }
   });
 
-  const pendingTasks = sortedTasks.filter((task) => task.status === "pending");
-  const inProgressTasks = sortedTasks.filter((task) => task.status === "in-progress");
-  const completedTasks = sortedTasks.filter((task) => task.status === "completed");
+  const selectedDateStr = selectedDate.toDateString();
+
+const pendingTasks = sortedTasks.filter(
+(task) =>
+task.status === "pending" &&
+(!task.due_date ||
+new Date(task.due_date).toDateString() === selectedDateStr)
+);
+
+const inProgressTasks = sortedTasks.filter(
+(task) =>
+task.status === "in-progress" &&
+(!task.due_date ||
+new Date(task.due_date).toDateString() === selectedDateStr)
+);
+
+const completedTasks = sortedTasks.filter(
+(task) =>
+task.status === "completed" &&
+(!task.due_date ||
+new Date(task.due_date).toDateString() === selectedDateStr)
+);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -406,6 +428,10 @@ function Dashboard() {
       </div>
     );
   }
+
+  const dueDates = tasks
+  .filter(task => task.due_date)
+  .map(task => new Date(task.due_date).toDateString());
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -678,6 +704,35 @@ userName.charAt(0).toUpperCase()
                 </BarChart>
               </ResponsiveContainer>
             </motion.div>
+          <div
+className={`rounded-2xl shadow-lg p-6 mt-6 ${
+darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+}`}
+>
+<h2 className="text-2xl font-bold mb-6">
+📅 Calendar
+</h2>
+
+<Calendar
+onChange={setSelectedDate}
+value={selectedDate}
+tileClassName={({ date, view }) => {
+if (view !== "month") return null;
+
+const classes = [];
+
+if (date.toDateString() === new Date().toDateString()) {
+classes.push("today-tile");
+}
+
+if (dueDates.includes(date.toDateString())) {
+classes.push("has-due-date");
+}
+
+return classes.join(" ");
+}}
+/>
+</div> 
           </div>
 
           {/* Task manager heading + create button */}
