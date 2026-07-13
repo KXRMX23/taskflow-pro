@@ -3,8 +3,9 @@ const db = require("../config/db");
 // Create Task
 const createTask = async (req, res) => {
   try {
-    const { title, description, status, priority, tags, due_date } = req.body;
+    const { title, description, status, priority, tags, due_date, comments } = req.body;
     const userId = req.user.id; // Get user ID from the authenticated user
+    const formattedDueDate = due_date === "" ? null : due_date; // Set to null if empty string
 
     if (!title) {
       return res.status(400).json({
@@ -13,10 +14,10 @@ const createTask = async (req, res) => {
     }
 
     const newTask = await db.query(
-      `INSERT INTO tasks(title, description, status, priority, tags, due_date, user_id)
-       VALUES($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO tasks(title, description, status, priority, tags, due_date, comments, user_id)
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
-      [title, description, status, priority, tags, due_date, userId]
+      [title, description, status, priority, tags, formattedDueDate, comments, userId]
     );
 
     res.status(201).json({
@@ -58,7 +59,8 @@ const getTasks = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, priority, tags } = req.body;
+    const { title, description, status, priority, tags, due_date, comments } = req.body;
+    const formattedDueDate = due_date === "" ? null : due_date; // Set to null if empty string
 
     const updatedTask = await db.query(
       `UPDATE tasks
@@ -66,11 +68,13 @@ const updateTask = async (req, res) => {
            description=$2,
            status=$3,
            priority=$4,
-           tags=$5
-       WHERE id=$6
-       AND user_id=$7
+           tags=$5,
+           due_date=$6,
+           comments=$7
+       WHERE id=$8
+       AND user_id=$9
        RETURNING *`,
-      [title, description, status, priority, tags, id, req.user.id]
+      [title, description, status, priority, tags, formattedDueDate, comments, id, req.user.id]
     );
 
     if (updatedTask.rows.length === 0) {

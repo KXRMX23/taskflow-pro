@@ -63,6 +63,7 @@ function Dashboard() {
     status: "pending",
     priority: "Medium",
     tags: "",
+    comments: "",
     due_date: "",
    });
  
@@ -339,7 +340,15 @@ new Date(task.due_date).toDateString() === selectedDateStr)
 ))}
 </ul>
 ) : (
+<>
 <p className="leading-7">{task.description}</p>
+
+{task.comments && (
+<p className="mt-2 text-sm italic text-gray-500 dark:text-gray-400">
+💬 {task.comments}
+</p>
+)}
+</>
 )}
 </div>
 
@@ -821,6 +830,20 @@ darkMode
 ? "bg-gray-700 text-white border-gray-600"
 : "bg-white text-black border-gray-300"
 }`}
+/>
+
+<textarea
+placeholder="Comments..."
+value={newTask.comments}
+onChange={(e) =>
+setNewTask({ ...newTask, comments: e.target.value })
+}
+className={`w-full rounded-xl border px-4 py-3 shadow-sm transition ${
+darkMode
+? "bg-gray-800 text-white border-gray-700"
+: "bg-white border-gray-300"
+}`}
+rows={3}
 />
 
 <input
