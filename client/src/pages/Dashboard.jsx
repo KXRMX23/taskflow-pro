@@ -299,6 +299,25 @@ formData.append("attachment", newTask.attachment);
     }
   };
 
+  const archiveTask = async (id) => {
+try {
+const confirmed = window.confirm(
+"Archive this task? You can restore it later."
+);
+
+if (!confirmed) return;
+
+await API.put(`/tasks/${id}/archive`);
+
+setTasks(tasks.filter((task) => task.id !== id));
+
+toast.success("Task archived successfully!");
+} catch (err) {
+console.log(err.response?.data || err.message);
+toast.error("Unable to archive task.");
+}
+};
+
   const onDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
@@ -464,6 +483,13 @@ className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue
             >
             📜 Activity  
             </button>
+
+           <button
+onClick={() => archiveTask(task.id)}
+className="bg-cyan-500 hover:bg-cyan-600  text-white px-5 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+>
+📦 Archive
+</button> 
 
             <button
               onClick={() => deleteTask(task.id)}

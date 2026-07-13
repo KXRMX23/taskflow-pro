@@ -70,7 +70,7 @@ const getTasks = async (req, res) => {
     const userId = req.user.id; // Get user ID from the authenticated user
 
     const tasks = await db.query(
-      'SELECT * FROM tasks WHERE user_id = $1 ORDER BY id ASC',
+      'SELECT * FROM tasks WHERE user_id = $1  AND is_archived = FALSE ORDER BY id ASC',
       [userId]
     );
 
@@ -158,6 +158,40 @@ VALUES ($1, $2)`,
   }
 };
 
+const archiveTask = async (req, res) => {
+try {
+const { id } = req.params;
+
+const archivedTask = await db.query(
+`
+UPDATE tasks
+SET is_archived = TRUE
+WHERE id = $1
+RETURNING *;
+`,
+[id]
+);
+
+if (archivedTask.rows.length === 0) {
+return res.status(404).json({
+message: "Task not found",
+});
+}
+
+res.status(200).json({
+message: "Task archived successfully",
+task: archivedTask.rows[0],
+});
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
+
 // Delete Task
 const deleteTask = async (req, res) => {
   try {
@@ -192,5 +226,6 @@ module.exports = {
   getTasks,
   getActivityLogs,
   updateTask,
+  archiveTask,
   deleteTask,
 };

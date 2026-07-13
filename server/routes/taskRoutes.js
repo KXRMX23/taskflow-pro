@@ -6,6 +6,7 @@ const {
   getTasks,
   getActivityLogs,
   updateTask,
+  archiveTask,
   deleteTask,
 } = require("../controllers/taskController");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -26,6 +27,12 @@ router.put(
   upload.single("attachment"),
   updateTask
 );
+
+router.put(
+  "/:id/archive",
+  authMiddleware,
+  archiveTask
+)
 router.delete("/:id", authMiddleware, deleteTask);
 
 module.exports = router;
