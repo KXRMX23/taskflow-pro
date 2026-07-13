@@ -85,6 +85,31 @@ const getTasks = async (req, res) => {
   }
 };
 
+const getArchivedTasks = async (req, res) => {
+try {
+const userId = req.user.id;
+
+const archivedTasks = await db.query(
+`
+SELECT *
+FROM tasks
+WHERE user_id = $1
+AND is_archived = TRUE
+ORDER BY id DESC;
+`,
+[userId]
+);
+
+res.status(200).json(archivedTasks.rows);
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
 const getActivityLogs = async (req, res) => {
 try {
 const { id } = req.params;
@@ -162,6 +187,7 @@ const archiveTask = async (req, res) => {
 try {
 const { id } = req.params;
 
+// archive Task
 const archivedTask = await db.query(
 `
 UPDATE tasks
@@ -190,6 +216,41 @@ message: "Server Error",
 });
 }
 };
+
+// Restore Task
+const restoreTask = async (req, res) => {
+try {
+const { id } = req.params;
+
+const restoredTask = await db.query(
+`
+UPDATE tasks
+SET is_archived = FALSE
+WHERE id = $1
+RETURNING *;
+`,
+[id]
+);
+
+if (restoredTask.rows.length === 0) {
+return res.status(404).json({
+message: "Task not found",
+});
+}
+
+res.status(200).json({
+message: "Task restored successfully",
+task: restoredTask.rows[0],
+});
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
 
 
 // Delete Task
@@ -224,8 +285,10 @@ const deleteTask = async (req, res) => {
 module.exports = {
   createTask,
   getTasks,
+  getArchivedTasks,
   getActivityLogs,
   updateTask,
   archiveTask,
+  restoreTask,
   deleteTask,
 };

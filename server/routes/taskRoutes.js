@@ -4,9 +4,11 @@ const router = express.Router();
 const {
   createTask,
   getTasks,
+  getArchivedTasks,
   getActivityLogs,
   updateTask,
   archiveTask,
+  restoreTask,
   deleteTask,
 } = require("../controllers/taskController");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -20,6 +22,11 @@ router.post(
 );
 
 router.get("/", authMiddleware, getTasks);
+router.get(
+  "/archived",
+  authMiddleware,
+  getArchivedTasks
+);
 router.get("/:id/activity", authMiddleware, getActivityLogs);
 router.put(
   "/:id",
@@ -32,7 +39,13 @@ router.put(
   "/:id/archive",
   authMiddleware,
   archiveTask
-)
+);
+
+router.put(
+  "/:id/restore",
+  authMiddleware,
+  restoreTask
+);
 router.delete("/:id", authMiddleware, deleteTask);
 
 module.exports = router;
