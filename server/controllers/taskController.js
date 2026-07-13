@@ -85,6 +85,31 @@ const getTasks = async (req, res) => {
   }
 };
 
+const getActivityLogs = async (req, res) => {
+try {
+const { id } = req.params;
+
+const logs = await db.query(
+`
+SELECT *
+FROM activity_logs
+WHERE task_id = $1
+ORDER BY created_at DESC
+`,
+[id]
+);
+
+res.status(200).json(logs.rows);
+
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
 // Update Task
 const updateTask = async (req, res) => {
   try {
@@ -165,6 +190,7 @@ const deleteTask = async (req, res) => {
 module.exports = {
   createTask,
   getTasks,
+  getActivityLogs,
   updateTask,
   deleteTask,
 };

@@ -73,6 +73,11 @@ function Dashboard() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
 
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showActivity, setShowActivity] = useState(false);
+
+
   const [user, setUser] = useState(null);
 
   const hour = new Date().getHours();
@@ -205,6 +210,19 @@ new Date(task.due_date).toDateString() === selectedDateStr)
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
    }, [darkMode]);
+
+   const fetchActivityLogs = async (taskId) => {
+try {
+const response = await API.get(`/tasks/${taskId}/activity`);
+
+setActivityLogs(response.data);
+setSelectedTask(taskId);
+setShowActivity(true);
+} catch (error) {
+console.log(error);
+toast.error("Unable to load activity.");
+}
+};
  
   const handleChange = (e) => {
     setNewTask({ ...newTask, [e.target.name]: e.target.value });
@@ -439,6 +457,14 @@ className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue
             >
               ✏️ Edit
             </button>
+
+            <button
+            onClick={() => fetchActivityLogs(task.id)}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+            >
+            📜 Activity  
+            </button>
+
             <button
               onClick={() => deleteTask(task.id)}
               disabled={deletingTaskId === task.id}
@@ -989,8 +1015,49 @@ darkMode
           </div>
         </div>
       </motion.div>
-    </DragDropContext>
-  );
+    
+  
+  {showActivity && (
+<div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+<div className="bg-white dark:bg-gray-900 rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto shadow-2xl">
+
+<div className="flex justify-between items-center mb-5">
+<h2 className="text-2xl font-bold">
+📜 Activity History
+</h2>
+
+<button
+onClick={() => setShowActivity(false)}
+className="text-red-500 text-xl"
+>
+✖
+</button>
+</div>
+
+{activityLogs.length === 0 ? (
+<p>No activity found.</p>
+) : (
+activityLogs.map((log) => (
+<div
+key={log.id}
+className="border-b py-3"
+>
+<p className="font-semibold">
+{log.action}
+</p>
+
+<p className="text-sm text-gray-500">
+{new Date(log.created_at).toLocaleString()}
+</p>
+</div>
+))
+)}
+</div>
+</div>
+)}
+</DragDropContext>
+  
+);
 }
  
 export default Dashboard;

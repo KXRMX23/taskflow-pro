@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   createTask,
   getTasks,
+  getActivityLogs,
   updateTask,
   deleteTask,
 } = require("../controllers/taskController");
@@ -18,6 +19,7 @@ router.post(
 );
 
 router.get("/", authMiddleware, getTasks);
+router.get("/:id/activity", authMiddleware, getActivityLogs);
 router.put(
   "/:id",
   authMiddleware,
