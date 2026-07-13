@@ -18,7 +18,12 @@ router.post(
 );
 
 router.get("/", authMiddleware, getTasks);
-router.put("/:id", authMiddleware, updateTask);
+router.put(
+  "/:id",
+  authMiddleware,
+  upload.single("attachment"),
+  updateTask
+);
 router.delete("/:id", authMiddleware, deleteTask);
 
 module.exports = router;

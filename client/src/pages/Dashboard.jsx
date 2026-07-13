@@ -242,7 +242,7 @@ formData.append("status", newTask.status);
 formData.append("priority", newTask.priority);
 formData.append("tags", newTask.tags);
 formData.append("comments", newTask.comments);
-formData.append("due_date", newTask.due_date);
+formData.append("due_date", newTask.due_date ? newTask.due_date : "");
 
 if (newTask.attachment) {
 formData.append("attachment", newTask.attachment);

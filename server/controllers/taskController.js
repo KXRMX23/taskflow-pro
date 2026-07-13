@@ -29,7 +29,7 @@ streamifier.createReadStream(req.file.buffer).pipe(stream);
 attachment = result.secure_url;
 }
 
-    const formattedDueDate = due_date === "" ? null : due_date; // Set to null if empty string
+    const formattedDueDate = !due_date ? null : due_date; // Set to null if empty string
 
     if (!title) {
       return res.status(400).json({
@@ -42,6 +42,12 @@ attachment = result.secure_url;
        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [title, description, status, priority, tags, formattedDueDate, comments, attachment, userId]
+    );
+
+    await db.query(
+      `INSERT INTO activity_logs (task_id, action)
+       VALUES ($1, $2)`,
+       [newTask.rows[0].id, "Task Created"]
     );
 
     res.status(201).json({
@@ -106,6 +112,12 @@ const updateTask = async (req, res) => {
         message: "Task not found",
       });
     }
+
+    await db.query(
+`INSERT INTO activity_logs (task_id, action)
+VALUES ($1, $2)`,
+[updatedTask.rows[0].id, "Task Updated"]
+);
 
     res.status(200).json({
       message: "Task Updated Successfully",
