@@ -1,10 +1,34 @@
 const db = require("../config/db");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
 // Create Task
 const createTask = async (req, res) => {
   try {
     const { title, description, status, priority, tags, due_date, comments } = req.body;
     const userId = req.user.id; // Get user ID from the authenticated user
+
+let attachment = "";
+
+if (req.file) {
+const result = await new Promise((resolve, reject) => {
+const stream = cloudinary.uploader.upload_stream(
+{
+folder: "taskflow-attachments",
+resource_type: "auto",
+},
+(error, result) => {
+if (error) reject(error);
+else resolve(result);
+}
+);
+
+streamifier.createReadStream(req.file.buffer).pipe(stream);
+});
+
+attachment = result.secure_url;
+}
+
     const formattedDueDate = due_date === "" ? null : due_date; // Set to null if empty string
 
     if (!title) {
@@ -14,10 +38,10 @@ const createTask = async (req, res) => {
     }
 
     const newTask = await db.query(
-      `INSERT INTO tasks(title, description, status, priority, tags, due_date, comments, user_id)
-       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO tasks(title, description, status, priority, tags, due_date, comments, attachment, user_id)
+       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [title, description, status, priority, tags, formattedDueDate, comments, userId]
+      [title, description, status, priority, tags, formattedDueDate, comments, attachment, userId]
     );
 
     res.status(201).json({

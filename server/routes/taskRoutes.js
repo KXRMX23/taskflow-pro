@@ -8,8 +8,15 @@ const {
   deleteTask,
 } = require("../controllers/taskController");
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../middleware/upload");
 
-router.post("/", authMiddleware, createTask);
+router.post(
+  "/", 
+  authMiddleware,
+  upload.single("attachment"),
+  createTask
+);
+
 router.get("/", authMiddleware, getTasks);
 router.put("/:id", authMiddleware, updateTask);
 router.delete("/:id", authMiddleware, deleteTask);

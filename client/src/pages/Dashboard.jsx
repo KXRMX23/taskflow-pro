@@ -65,6 +65,7 @@ function Dashboard() {
     tags: "",
     comments: "",
     due_date: "",
+    attachment: null,
    });
  
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -232,13 +233,28 @@ new Date(task.due_date).toDateString() === selectedDateStr)
      e.preventDefault();
      setSubmitting(true);
     try {
+
+    const formData = new FormData();
+
+formData.append("title", newTask.title);
+formData.append("description", newTask.description);
+formData.append("status", newTask.status);
+formData.append("priority", newTask.priority);
+formData.append("tags", newTask.tags);
+formData.append("comments", newTask.comments);
+formData.append("due_date", newTask.due_date);
+
+if (newTask.attachment) {
+formData.append("attachment", newTask.attachment);
+}
+
       if (editingTaskId) {
-        const response = await API.put(`/tasks/${editingTaskId}`, newTask);
+        const response = await API.put(`/tasks/${editingTaskId}`, formData);
         setTasks(tasks.map((task) => (task.id === editingTaskId ? response.data.task : task)));
         toast.success("Task updated successfully!");
         setEditingTaskId(null);
       } else {
-        const response = await API.post("/tasks", newTask);
+        const response = await API.post("/tasks", formData);
         setTasks([...tasks, response.data.task]);
         toast.success("Task created successfully!");
       }
@@ -402,7 +418,21 @@ new Date(task.due_date).toDateString() === selectedDateStr)
 </p>
 )}
 
+{task.attachment && (
+<p className="mb-4">
+<a
+href={task.attachment}
+target="_blank"
+rel="noopener noreferrer"
+className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+>
+📎 View Attachment
+</a>
+</p>
+)}
+
           <div className="flex flex-wrap gap-3 mt-6">
+
             <button
               onClick={() => handleEditChange(task)}
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
@@ -845,6 +875,27 @@ darkMode
 }`}
 rows={3}
 />
+
+<div className="mb-4">
+<label className="block text-sm font-medium mb-2">
+Attachment
+</label>
+
+<input
+type="file"
+onChange={(e) =>
+setNewTask({
+...newTask,
+attachment: e.target.files[0],
+})
+}
+className={`w-full border rounded-lg p-3 ${
+darkMode
+? "bg-gray-700 text-white border-gray-600"
+: "bg-white border-gray-300"
+}`}
+/>
+</div>
 
 <input
 type="date"

@@ -27,6 +27,7 @@ const createTasksTable = async () => {
         priority VARCHAR(50) DEFAULT 'Medium',
         tags TEXT DEFAULT '',
         comments TEXT DEFAULT '',
+        attachment TEXT DEFAULT '',
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -45,6 +46,13 @@ const createTasksTable = async () => {
     `);
 
     console.log("✅ comments column verified");
+
+    await pool.query(`
+      ALTER TABLE tasks
+      ADD COLUMN IF NOT EXISTS attachment TEXT DEFAULT '';
+    `);
+
+    console.log("✅ attachment column verified");
 
     console.log("✅ Tasks table created");
   } catch (error) {
