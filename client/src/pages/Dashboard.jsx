@@ -537,13 +537,13 @@ className="bg-cyan-500 hover:bg-cyan-600  text-white px-5 py-2 rounded-lg font-s
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:pt-10 pb-10">
            {/* Header */}
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start mb-8">
 <div>
 <h1 className="text-5xl font-extrabold">
 {greeting}, {userName} 👋
 </h1>
 
-<p className="text-gray-500 dark:text-gray-400 mt-2">
+<p className="text-gray-500 dark:text-gray-400 mt-2 mb-6">
 {today}
 </p>
 </div>
@@ -557,7 +557,8 @@ className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-lg font-
 </div>
 
 
-            <div className="flex items-center gap-4 self-start lg:self-auto">
+
+            <div className="flex items-center gap-4 self-start lg:self-auto -mt-9">
               <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
 {user?.profile_image ? (
 <img
@@ -569,6 +570,7 @@ className="w-full h-full rounded-full object-cover"
 userName.charAt(0).toUpperCase()
 )}
 </div>
+
 
 
               <button
@@ -586,17 +588,18 @@ userName.charAt(0).toUpperCase()
                 <LogOut size={20} />
                 Logout
               </button>
-            </div>
-          </div>
+              </div>
+          
+          
 
           {/* Search & Filters */}
-          <div className="flex flex-col md:flex-row gap-4 mb-10">
+          <div className="flex flex-col md:flex-row gap-4 mt-6 mb-10">
             <input
               type="text"
               placeholder="🔍 Search tasks..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`flex-1 rounded-xl border px-6 py-3 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none ${
+              className={`flex-1 rounded-xl border px-6 py-4 shadow-sm transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none ${
                 darkMode ? "bg-gray-800 text-white border-gray-700" : "bg-white border-gray-300"
               }`}
             />
@@ -1052,7 +1055,9 @@ darkMode
               </div>
             )}
           </div>
-        
+          
+          
+      </div> 
       </motion.div>
     
   
@@ -1093,6 +1098,7 @@ className="border-b py-3"
 )}
 </div>
 </div>
+
 )}
 </DragDropContext>
   
