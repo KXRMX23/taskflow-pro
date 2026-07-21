@@ -12,6 +12,7 @@ function Login() {
   });
 
   const [error, setError] = useState("");
+  const [showResend, setShowResend] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -35,10 +36,35 @@ function Login() {
 
     navigate("/dashboard");
   } catch (err) {
-    setError(err.response?.data?.message || "Login failed");
+    const message = err.response?.data?.message || "Login failed";
+
+setError(message);
+
+if (message.includes("verify")) {
+setShowResend(true);
+} else {
+setShowResend(false);
+}
+
   } finally {
     setLoading(false);
   }
+};
+
+const handleResendVerification = async () => {
+try {
+const response = await API.post("/auth/resend-verification", {
+email: formData.email,
+});
+
+setError(response.data.message);
+setShowResend(false);
+} catch (err) {
+setError(
+err.response?.data?.message ||
+"Failed to resend verification email"
+);
+}
 };
 
     return (
@@ -53,11 +79,23 @@ function Login() {
     Sign in to continue to TaskFlow Pro
   </p>  
 
-      {error && (
-  <p className="bg-red-100 text-red-600 p-3 rounded-lg mb-5 text-center">
-    {error}
-  </p>
+   {error && (
+<>
+<p className="bg-red-100 text-red-600 p-3 rounded-lg mb-3 text-center">
+{error}
+</p>
+
+{showResend && (
+<button
+type="button"
+onClick={handleResendVerification}
+className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg mb-5 transition"
+>
+Resend Verification Email
+</button>
 )}
+</>
+)}   
 
       <form onSubmit={handleSubmit} className="space-y-4">
 

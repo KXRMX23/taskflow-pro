@@ -164,9 +164,56 @@ message: "Server Error",
 }
 };
 
+const resendVerification = async (req, res) => {
+try {
+const { email } = req.body;
+
+const user = await db.query(
+"SELECT * FROM users WHERE email = $1",
+[email]
+);
+
+if (user.rows.length === 0) {
+return res.status(404).json({
+message: "User not found",
+});
+}
+
+if (user.rows[0].is_verified) {
+return res.status(400).json({
+message: "Email is already verified",
+});
+}
+
+const verificationToken = crypto.randomBytes(32).toString("hex");
+
+await db.query(
+`UPDATE users
+SET verification_token = $1
+WHERE email = $2`,
+[verificationToken, email]
+);
+
+await sendVerificationEmail(email, verificationToken);
+
+res.json({
+message: "Verification email sent successfully",
+});
+
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
+
 
 module.exports = {
   register,
   login,
   verifyEmail,
+  resendVerification,
 };
