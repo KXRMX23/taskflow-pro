@@ -146,9 +146,7 @@ WHERE verification_token = $1`,
 [token]
 );
 
-res.json({
-message: "Email verified successfully!",
-});
+res.redirect("http://localhost:5173/email-verified");
 
 } catch (error) {
 console.log(error);
