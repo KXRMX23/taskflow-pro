@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const { sendVerificationEmail } = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 
@@ -46,6 +47,8 @@ verificationToken,
 false
 ]
 );
+
+await sendVerificationEmail(email, verificationToken);
 
     res.status(201).json({
       message: "User Registered Successfully",
@@ -120,7 +123,44 @@ const login = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+try {
+const { token } = req.params;
+
+const user = await db.query(
+"SELECT * FROM users WHERE verification_token = $1",
+[token]
+);
+
+if (user.rows.length === 0) {
+return res.status(400).json({
+message: "Invalid or expired verification link",
+});
+}
+
+await db.query(
+`UPDATE users
+SET is_verified = true,
+verification_token = NULL
+WHERE verification_token = $1`,
+[token]
+);
+
+res.json({
+message: "Email verified successfully!",
+});
+
+} catch (error) {
+console.log(error);
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
+
 module.exports = {
   register,
   login,
+  verifyEmail,
 };
