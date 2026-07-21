@@ -86,6 +86,14 @@ const login = async (req, res) => {
       });
     }
 
+    if (!user.rows[0].is_verified) {
+return res.status(403).json({
+message: "Please verify your email before logging in.",
+verified: false,
+});
+}
+
+
     // Compare password
     const validPassword = await bcrypt.compare(
       password,
