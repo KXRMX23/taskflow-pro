@@ -60,4 +60,44 @@ const createTasksTable = async () => {
   }
 };
 
+// Create Teams Table
+const createTeamsTable = async () => {
+try {
+await pool.query(`
+CREATE TABLE IF NOT EXISTS teams (
+id SERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+console.log("✅ Teams table verified");
+} catch (error) {
+console.log("❌ Error creating teams table:", error);
+}
+};
+
+// Create Team Members Table
+const createTeamMembersTable = async () => {
+try {
+await pool.query(`
+CREATE TABLE IF NOT EXISTS team_members (
+id SERIAL PRIMARY KEY,
+team_id INTEGER REFERENCES teams(id) ON DELETE CASCADE,
+user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+role VARCHAR(50) DEFAULT 'member',
+joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+UNIQUE(team_id, user_id)
+);
+`);
+
+console.log("✅ Team members table verified");
+} catch (error) {
+console.log("❌ Error creating team_members table:", error);
+}
+};
+
 createTasksTable();
+createTeamsTable();
+createTeamMembersTable();
