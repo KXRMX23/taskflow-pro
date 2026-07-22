@@ -22,6 +22,21 @@ ADD COLUMN IF NOT EXISTS profile_image TEXT;
 `);
 
 console.log("✅ profile_image column verified");
+
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS reset_password_token TEXT;
+  `);
+
+console.log("✅ reset_password_token column verified");
+
+await pool.query(`
+  ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS reset_password_expires TIMESTAMP;
+  `);
+
+console.log("✅ reset_password_expires column verified");
+
 } catch (err) {
 console.error(err);
 }

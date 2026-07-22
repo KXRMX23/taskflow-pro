@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { sendVerificationEmail } = require("../utils/sendEmail");
+const { sendVerificationEmail, sendPasswordResetEmail } = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 
@@ -210,10 +210,117 @@ message: "Server Error",
 };
 
 
+const forgotPassword = async (req, res) => {
+try {
+const { email } = req.body;
+
+if (!email) {
+return res.status(400).json({
+message: "Email is required",
+});
+}
+
+const user = await db.query(
+"SELECT * FROM users WHERE email = $1",
+[email]
+);
+
+if (user.rows.length === 0) {
+return res.status(404).json({
+message: "User not found",
+});
+}
+
+const resetToken = crypto.randomBytes(32).toString("hex");
+
+const expires = new Date(Date.now() + 60 * 60 * 1000);
+
+await db.query(
+`
+UPDATE users
+SET reset_password_token = $1,
+reset_password_expires = $2
+WHERE email = $3
+`,
+[resetToken, expires, email]
+);
+
+
+await sendPasswordResetEmail(email, resetToken);
+
+res.json({
+message: "Reset token generated successfully",
+});
+
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
+const resetPassword = async (req, res) => {
+try {
+  const { token } = req.params;
+  const { password } = req.body;
+
+if (!password) {
+return res.status(400).json({
+message: "Password is required",
+});
+}
+
+const user = await db.query(
+`
+SELECT * FROM users
+WHERE reset_password_token = $1
+AND reset_password_expires > NOW()
+`,
+[token]
+);
+
+if (user.rows.length === 0) {
+return res.status(400).json({
+message: "Invalid or expired reset link",
+});
+}
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+await db.query(
+`
+UPDATE users
+SET
+password = $1,
+reset_password_token = NULL,
+reset_password_expires = NULL
+WHERE id = $2
+`,
+[hashedPassword, user.rows[0].id]
+);
+
+res.json({
+message: "Password reset successfully",
+});
+
+
+} catch (error) {
+console.log(error);
+
+res.status(500).json({
+message: "Server Error",
+});
+}
+};
+
 
 module.exports = {
   register,
   login,
   verifyEmail,
   resendVerification,
+  forgotPassword,
+  resetPassword,
 };
